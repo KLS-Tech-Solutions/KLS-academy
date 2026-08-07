@@ -3,6 +3,7 @@
 import { JourneyProvider } from "@/hooks/use-journey";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { RequireSession } from "@/components/providers/require-session";
+import { IdleLogout } from "@/components/providers/idle-logout";
 import {
   JourneyError,
   JourneySkeleton,
@@ -16,6 +17,7 @@ import {
 export function DashboardProviders({ children }: { children: React.ReactNode }) {
   return (
     <RequireSession>
+      <IdleLogout />
       <JourneyProvider
         fallback={
           <DashboardShell chromeOnly>

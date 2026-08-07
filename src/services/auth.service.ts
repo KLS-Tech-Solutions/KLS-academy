@@ -4,7 +4,8 @@ import type { LoginValues, RegisterValues } from "@/lib/validation";
 
 /**
  * Auth calls hit the Next route handlers rather than the proxy, because those
- * handlers are what set and clear the httpOnly session cookies.
+ * handlers are what set and clear the httpOnly session cookies — and what
+ * refuse an administrator account before any cookie is written.
  */
 async function authRequest<T>(path: string, body?: unknown): Promise<T> {
   let response: Response;
@@ -44,13 +45,27 @@ export function logout() {
   return authRequest<{ ok: true }>("logout", {});
 }
 
+export function requestPasswordReset(email: string) {
+  return authRequest<{ ok: true }>("forgot-password", { email });
+}
+
+export function resetPassword(values: { token: string; password: string }) {
+  return authRequest<{ ok: true }>("reset-password", values);
+}
+
+export function verifyEmail(token: string) {
+  return authRequest<{ ok: true }>("verify-email", { token });
+}
+
 /** Returns null rather than throwing when nobody is signed in. */
 export async function getSession(): Promise<User | null> {
   try {
     const { user } = await authRequest<{ user: User }>("session");
     return user;
   } catch (error) {
-    if (error instanceof ApiError && error.kind === "unauthorized") return null;
+    if (error instanceof ApiError && ["unauthorized", "forbidden"].includes(error.kind)) {
+      return null;
+    }
     throw error;
   }
 }

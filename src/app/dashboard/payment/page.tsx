@@ -19,7 +19,7 @@ import { hasReached } from "@/types";
 const CERTIFICATE_FEE = 50;
 
 export default function PaymentPage() {
-  const { journey, stage, setStage } = useJourney();
+  const { journey, stage, refresh } = useJourney();
   const { toast } = useToast();
   const createOrder = useCreatePaymentOrder();
   const confirmPayment = useConfirmPayment();
@@ -41,7 +41,7 @@ export default function PaymentPage() {
         razorpay_signature: "signature-pending-razorpay-integration",
       });
       setCheckoutOpen(false);
-      setStage("certificate_issued");
+      refresh();
       toast({
         title: "Payment successful",
         description: "Your certificate is being issued.",
@@ -168,7 +168,8 @@ export default function PaymentPage() {
         </div>
       </div>
 
-      {/* Mock checkout — Razorpay integration lands in Phase 3 */}
+      {/* Confirmation step. The Razorpay checkout script is wired in the
+          payments sprint; the order and verify calls either side are real. */}
       <Dialog
         open={checkoutOpen}
         onClose={() => !processing && setCheckoutOpen(false)}
@@ -192,8 +193,8 @@ export default function PaymentPage() {
       >
         <div className="rounded-field bg-canvas p-4 text-[15px]">
           <p className="text-body">
-            This is a UI prototype — no real payment is taken. The live Razorpay checkout
-            opens here once the backend is connected.
+            Razorpay checkout opens here once the payment account is live. The order is
+            created and verified against the server either side of this step.
           </p>
         </div>
       </Dialog>

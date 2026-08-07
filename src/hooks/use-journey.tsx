@@ -1,18 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+
 import { queryKeys } from "@/lib/query-keys";
-import { USE_MOCKS } from "@/lib/api/config";
 import { getMyJourney } from "@/services/journey.service";
-import { DEFAULT_STAGE } from "@/data/journey";
-import type { JourneyStage, StudentJourney } from "@/types";
+import type { StudentJourney } from "@/types";
 
 interface JourneyContextValue {
   journey: StudentJourney;
-  stage: JourneyStage;
-  /** Development only — previews a stage without touching the backend. */
-  setStage: (stage: JourneyStage) => void;
+  stage: StudentJourney["stage"];
   refresh: () => void;
 }
 
@@ -22,8 +19,8 @@ const JourneyContext = React.createContext<JourneyContextValue | null>(null);
  * Loads the student's journey once and shares it with every dashboard screen.
  *
  * The provider owns the loading and error states so individual screens can
- * assume `journey` exists — that is what kept Phase 1's components unchanged
- * when real fetching replaced the mock context.
+ * assume `journey` exists. Everything comes from the API — there is no
+ * preview or demo mode.
  */
 export function JourneyProvider({
   children,
@@ -34,24 +31,10 @@ export function JourneyProvider({
   fallback?: React.ReactNode;
   errorFallback?: (error: unknown, retry: () => void) => React.ReactNode;
 }) {
-  const queryClient = useQueryClient();
-  const [previewStage, setPreviewStage] = React.useState<JourneyStage>(DEFAULT_STAGE);
-
   const query = useQuery({
-    // In mock mode the previewed stage is part of the identity of the data.
-    queryKey: USE_MOCKS
-      ? [...queryKeys.journey.all, previewStage]
-      : queryKeys.journey.all,
-    queryFn: () => getMyJourney(previewStage),
+    queryKey: queryKeys.journey.all,
+    queryFn: getMyJourney,
   });
-
-  const setStage = React.useCallback(
-    (stage: JourneyStage) => {
-      setPreviewStage(stage);
-      queryClient.invalidateQueries({ queryKey: queryKeys.journey.all });
-    },
-    [queryClient],
-  );
 
   const value = React.useMemo<JourneyContextValue | null>(
     () =>
@@ -59,11 +42,10 @@ export function JourneyProvider({
         ? {
             journey: query.data,
             stage: query.data.stage,
-            setStage,
             refresh: () => query.refetch(),
           }
         : null,
-    [query, setStage],
+    [query],
   );
 
   if (query.isPending) return <>{fallback ?? null}</>;

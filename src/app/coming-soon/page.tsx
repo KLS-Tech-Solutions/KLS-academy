@@ -45,7 +45,7 @@ export default function ComingSoonPage() {
             Visit KLS Tech Solutions
           </a>
           <a
-            href="mailto:contact@klstechsolutions.in"
+            href="mailto:klstechsolutions2025@gmail.com"
             className="rounded-xl border border-slate-700 px-8 py-4 transition hover:border-cyan-400"
           >
             Contact Us

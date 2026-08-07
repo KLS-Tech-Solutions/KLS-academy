@@ -6,10 +6,11 @@ import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
-import { Alert } from "@/components/ui/misc";
+import { Alert, Skeleton } from "@/components/ui/misc";
+import { EmptyState } from "@/components/shared/primitives";
 import { DashboardHeader } from "@/components/dashboard/page-header";
 import { DomainCard } from "@/components/marketing/domain-card";
-import { domains, getBatchForDomain } from "@/data/domains";
+import { useBatches, useDomains } from "@/hooks/queries";
 import { formatDate } from "@/lib/utils";
 import { useJourney } from "@/hooks/use-journey";
 import { useEnroll } from "@/hooks/mutations";
@@ -18,13 +19,17 @@ import { isApiError } from "@/lib/api/errors";
 
 export default function EnrollPage() {
   const router = useRouter();
-  const { journey, setStage } = useJourney();
+  const { journey, refresh } = useJourney();
   const { toast } = useToast();
   const enroll = useEnroll();
   const [selected, setSelected] = React.useState<string | null>(null);
 
+  const domainsQuery = useDomains();
+  const domains = React.useMemo(() => domainsQuery.data ?? [], [domainsQuery.data]);
+
   const domain = domains.find((d) => d.id === selected) ?? null;
-  const batch = domain ? getBatchForDomain(domain.id) : null;
+  const batchesQuery = useBatches(domain?.id);
+  const batch = batchesQuery.data?.[0] ?? null;
 
   if (journey.enrollment && journey.domain) {
     return (
@@ -61,18 +66,49 @@ export default function EnrollPage() {
         means starting the task sequence again.
       </Alert>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {domains.map((d) => (
-          <button
-            key={d.id}
-            type="button"
-            onClick={() => setSelected(d.id)}
-            className="text-left"
-          >
-            <DomainCard domain={d} className="h-full" />
-          </button>
-        ))}
-      </div>
+      {domainsQuery.isPending ? (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {[0, 1, 2].map((i) => (
+            <Skeleton key={i} className="h-72 rounded-card" />
+          ))}
+        </div>
+      ) : domainsQuery.isError ? (
+        <Card className="p-6">
+          <EmptyState
+            title="Couldn't load the internship domains"
+            description={
+              isApiError(domainsQuery.error)
+                ? domainsQuery.error.userMessage
+                : "Please try again in a moment."
+            }
+            action={
+              <Button variant="secondary" onClick={() => domainsQuery.refetch()}>
+                Try again
+              </Button>
+            }
+          />
+        </Card>
+      ) : domains.length === 0 ? (
+        <Card className="p-6">
+          <EmptyState
+            title="No internships are open yet"
+            description="Enrolment opens as soon as the next batch is published. We'll notify you."
+          />
+        </Card>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {domains.map((d) => (
+            <button
+              key={d.id}
+              type="button"
+              onClick={() => setSelected(d.id)}
+              className="text-left"
+            >
+              <DomainCard domain={d} className="h-full" />
+            </button>
+          ))}
+        </div>
+      )}
 
       <Dialog
         open={Boolean(domain)}
@@ -85,7 +121,7 @@ export default function EnrollPage() {
               Cancel
             </Button>
             <Button
-              disabled={enroll.isPending}
+              disabled={enroll.isPending || !batch}
               onClick={async () => {
                 if (!domain || !batch) return;
                 try {
@@ -95,7 +131,7 @@ export default function EnrollPage() {
                     description: "Your offer letter is ready to download.",
                     variant: "success",
                   });
-                  setStage("offer_letter_generated");
+                  refresh();
                   router.push("/dashboard/offer-letter");
                 } catch (error) {
                   toast({

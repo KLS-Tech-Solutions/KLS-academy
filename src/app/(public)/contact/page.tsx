@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Clock, Mail, MapPin } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Container, PageHero } from "@/components/shared/primitives";
+import { SUPPORT_EMAIL } from "@/lib/api/config";
 import { ContactForm } from "@/components/marketing/contact-form";
 
 export const metadata: Metadata = {
@@ -13,8 +14,8 @@ const details = [
   {
     icon: Mail,
     label: "Email",
-    value: "klstechsolutions2025@gmail.com",
-    href: "mailto:klstechsolutions2025@gmail.com",
+    value: SUPPORT_EMAIL,
+    href: `mailto:${SUPPORT_EMAIL}`,
   },
   { icon: MapPin, label: "Location", value: "Bengaluru, Karnataka, India" },
   { icon: Clock, label: "Response time", value: "Within 1–2 working days" },

@@ -56,6 +56,12 @@ export async function getRefreshToken() {
 }
 
 /** Calls FastAPI from the server, optionally with the student's access token. */
+export const STUDENT_ROLE = "student";
+
+export function isStudentRole(role: unknown): boolean {
+  return role === STUDENT_ROLE;
+}
+
 export async function callBackend(
   path: string,
   init: RequestInit & { authenticated?: boolean } = {},

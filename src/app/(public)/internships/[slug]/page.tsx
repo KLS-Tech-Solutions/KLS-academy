@@ -9,13 +9,9 @@ import { Card } from "@/components/ui/card";
 import { Accordion } from "@/components/ui/disclosure";
 import { Container, SectionHeader } from "@/components/shared/primitives";
 import { Reveal } from "@/components/shared/reveal";
-import { domains, getBatchForDomain, getDomainBySlug } from "@/data/domains";
+import { getBatchOnServer, getDomainOnServer } from "@/services/catalogue.server";
 import { faqs } from "@/data/content";
 import { formatDate } from "@/lib/utils";
-
-export function generateStaticParams() {
-  return domains.map((d) => ({ slug: d.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -23,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const domain = getDomainBySlug(slug);
+  const domain = await getDomainOnServer(slug);
   if (!domain) return { title: "Internship not found" };
   return { title: domain.title, description: domain.description };
 }
@@ -34,10 +30,10 @@ export default async function DomainDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const domain = getDomainBySlug(slug);
+  const domain = await getDomainOnServer(slug);
   if (!domain) notFound();
 
-  const batch = getBatchForDomain(domain.id);
+  const batch = await getBatchOnServer(domain.id);
 
   const facts = [
     { icon: Clock, label: "Duration", value: domain.duration },

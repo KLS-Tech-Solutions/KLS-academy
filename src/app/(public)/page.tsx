@@ -19,9 +19,10 @@ import { Accordion } from "@/components/ui/disclosure";
 import { Container, SectionHeader } from "@/components/shared/primitives";
 import { Reveal } from "@/components/shared/reveal";
 import { DomainCard } from "@/components/marketing/domain-card";
+import { EmptyCatalogue } from "@/components/marketing/empty-catalogue";
 import { CertificatePreview } from "@/components/marketing/certificate-preview";
-import { domains } from "@/data/domains";
-import { faqs, journeySteps, testimonials, whyKls } from "@/data/content";
+import { listDomainsOnServer } from "@/services/catalogue.server";
+import { faqs, journeySteps, whyKls } from "@/data/content";
 
 const whyIcons: Record<string, LucideIcon> = {
   briefcase: Briefcase,
@@ -32,7 +33,9 @@ const whyIcons: Record<string, LucideIcon> = {
   rocket: Rocket,
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const domains = await listDomainsOnServer();
+
   return (
     <>
       {/* ---------------------------------------------------------------- */}
@@ -138,13 +141,19 @@ export default function HomePage() {
             description="Six domains, each with a fixed set of technical tasks, clear deadlines and a reviewed final submission."
           />
 
-          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {domains.map((domain, i) => (
-              <Reveal key={domain.id} delay={i * 0.05}>
-                <DomainCard domain={domain} className="h-full" />
-              </Reveal>
-            ))}
-          </div>
+          {domains.length === 0 ? (
+            <div className="mt-12">
+              <EmptyCatalogue />
+            </div>
+          ) : (
+            <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {domains.map((domain, i) => (
+                <Reveal key={domain.id} delay={i * 0.05}>
+                  <DomainCard domain={domain} className="h-full" />
+                </Reveal>
+              ))}
+            </div>
+          )}
         </Container>
       </section>
 
@@ -244,33 +253,6 @@ export default function HomePage() {
           <Reveal delay={0.1}>
             <CertificatePreview />
           </Reveal>
-        </Container>
-      </section>
-
-      {/* ---------------------------------------------------------------- */}
-      {/* Testimonials                                                      */}
-      {/* ---------------------------------------------------------------- */}
-      <section className="border-t border-line py-20 sm:py-24">
-        <Container>
-          <SectionHeader eyebrow="Student voices" title="What finishing feels like" />
-          <div className="mt-12 grid gap-5 lg:grid-cols-3">
-            {testimonials.map((t, i) => (
-              <Reveal key={t.name} delay={i * 0.06}>
-                <Card className="flex h-full flex-col p-6">
-                  <p className="flex-1 text-[15px] leading-relaxed text-body">
-                    &ldquo;{t.quote}&rdquo;
-                  </p>
-                  <div className="mt-6 border-t border-line pt-4">
-                    <p className="text-[15px] font-semibold text-ink">{t.name}</p>
-                    <p className="text-sm text-muted">{t.role}</p>
-                  </div>
-                </Card>
-              </Reveal>
-            ))}
-          </div>
-          <p className="mt-6 text-center text-[13px] text-muted">
-            Illustrative examples shown while Batch 01 is in progress.
-          </p>
         </Container>
       </section>
 

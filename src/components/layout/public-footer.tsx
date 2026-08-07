@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 import { Logo } from "@/components/shared/Logo";
+import { SUPPORT_EMAIL } from "@/lib/api/config";
 import { Container } from "@/components/shared/primitives";
 
 const columns = [
@@ -47,11 +48,11 @@ export function PublicFooter() {
             </p>
             <div className="mt-5 flex flex-col gap-2 text-sm text-body">
               <a
-                href="mailto:klstechsolutions2025@gmail.com"
+                href={`mailto:${SUPPORT_EMAIL}`}
                 className="inline-flex items-center gap-2 transition-colors hover:text-brand"
               >
                 <Mail className="size-4 text-muted" />
-                klstechsolutions2025@gmail.com
+                {SUPPORT_EMAIL}
               </a>
               <span className="inline-flex items-center gap-2">
                 <MapPin className="size-4 text-muted" />

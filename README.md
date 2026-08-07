@@ -3,9 +3,9 @@
 Front end for [academy.klstechsolutions.in](https://academy.klstechsolutions.in) — the
 verified virtual internship platform by KLS Tech Solutions.
 
-**Status: Phases 1–3 complete.** Full UI, validated forms, and a real API layer with
-httpOnly-cookie sessions. Runs end to end on mock data until `NEXT_PUBLIC_USE_MOCKS`
-is set to `false` — no code change needed to point it at FastAPI.
+**Status: production-ready.** Full UI, validated forms, and a real API layer with
+httpOnly-cookie sessions. No mock data, no demo login — everything comes from FastAPI
+and PostgreSQL.
 
 ## Getting started
 
@@ -44,12 +44,12 @@ src/
 │   ├── marketing/       Domain card, certificate preview, public forms
 │   ├── dashboard/       Stat cards, journey timeline, screenshot uploader
 │   └── shared/          Logo, container, section headers, empty/locked states
-├── data/                Mock JSON-shaped data
-├── services/            API calls, mock-switchable via NEXT_PUBLIC_USE_MOCKS
+├── data/                Static marketing copy (FAQs, journey steps)
+├── services/            API calls — client and server variants
 ├── types/               Types mirrored from the PostgreSQL schema
 ├── app/api/             Auth route handlers + FastAPI proxy (server only)
 ├── hooks/               Journey provider, session, queries, mutations
-├── lib/api/             HTTP client, error taxonomy, mock switch
+├── lib/api/             HTTP client, error taxonomy, config
 ├── lib/validation/      Zod schemas — the single source of truth for rules
 └── styles/theme.css     KLS design tokens
 ```
@@ -64,9 +64,9 @@ not_enrolled → enrolled → offer_letter_generated → linkedin_submitted
 → payment_pending → paid → certificate_issued
 ```
 
-`hasReached(stage, target)` decides what is unlocked. In development a **stage
-switcher** appears in the dashboard top bar — use it to preview any of the ten states
-without a backend. It hides itself in production builds.
+`hasReached(stage, target)` decides what is unlocked. **The backend computes the stage
+on every read** and neither frontend infers it — so an approval that is reversed or a
+payment that fails later immediately changes what the student sees.
 
 ## Launch flag
 
@@ -118,15 +118,17 @@ Success feedback goes through the toast provider in `src/components/ui/toast.tsx
 
 ## API layer (Phase 3 — done)
 
-Every service calls the real API. It runs against mock data until you flip one env var.
-See `docs/API_CONTRACT.md` for the endpoint shapes the backend must return.
+Every service calls the real API. See `../kls-api/docs/API_CONTRACT.md` for the endpoint
+shapes.
 
 ```bash
-NEXT_PUBLIC_USE_MOCKS=true    # resolve from src/data, no backend needed
-NEXT_PUBLIC_USE_MOCKS=false   # call FastAPI through the proxy
 API_BASE_URL=http://localhost:8000/api/v1
 COOKIE_SECURE=true            # required in any deployed environment
+NEXT_PUBLIC_LAUNCH_MODE=live  # or coming_soon
 ```
+
+**There is no mock mode.** Every screen reads from the API — the backend must be
+running. If it is down the app shows an error rather than quietly serving invented data.
 
 **Auth never touches JavaScript-readable storage.** The browser posts to
 `/api/auth/login`; a Next route handler exchanges it with FastAPI and stores both tokens
@@ -148,8 +150,7 @@ FastAPI 422 responses map back onto the individual form fields that produced the
 
 `GET /me/journey` is the endpoint that matters most — one aggregate carrying stage,
 enrolment, tasks, submissions, payment and certificate. `JourneyProvider` owns its
-loading and error states, which is why no Phase 1 screen needed rewriting when real
-fetching replaced the mock context.
+loading and error states, so individual screens can assume the data exists.
 
 ### Architecture
 
@@ -163,8 +164,15 @@ browser ──► /api/auth/*    (route handlers)  ──► FastAPI   sets http
 - MSME mark is recovered from a watermarked source — replace `public/brand/msme.png`
   with the official Udyam artwork before any document is issued.
 - Brand logos are raster; drop in SVGs and change two `src` strings in `Logo.tsx`.
-- Offer letter and certificate are styled HTML previews; downloads are inert.
 - Razorpay browser checkout is stubbed between `/payments/order` and `/payments/verify`.
-- Password reset and email verification resolve locally — they need the token from the
-  email link.
-- Legal pages are placeholder copy pending review.
+- Password reset and email verification generate tokens but nothing sends them yet.
+- Legal pages are placeholder copy pending review — this blocks Razorpay activation.
+
+## Security
+
+- **Auto logout** after 30 minutes of inactivity, coordinated across browser tabs. Only
+  a timestamp goes in localStorage; no token ever does.
+- **Administrator accounts cannot sign in here** — the login route checks the role and
+  refuses before writing a cookie. They use the admin console.
+- **A dead session redirects to `/login`** from one place in the API client, with a
+  banner explaining why.

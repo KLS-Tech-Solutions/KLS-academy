@@ -21,7 +21,6 @@ import { Logo } from "@/components/shared/Logo";
 import { Avatar } from "@/components/ui/misc";
 import { useJourney } from "@/hooks/use-journey";
 import { hasReached } from "@/types";
-import { StageSwitcher } from "@/components/dashboard/stage-switcher";
 import { useLogout } from "@/hooks/use-session";
 
 const nav = [
@@ -173,8 +172,6 @@ function ShellWithJourney({ children }: { children: React.ReactNode }) {
               {journey.batch ? journey.batch.batch_name : "No active internship"}
             </p>
           </div>
-
-          <StageSwitcher />
 
           <Link
             href="/dashboard/notifications"

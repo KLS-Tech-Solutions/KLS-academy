@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Container, PageHero } from "@/components/shared/primitives";
 import { Reveal } from "@/components/shared/reveal";
 import { DomainCard } from "@/components/marketing/domain-card";
-import { domains } from "@/data/domains";
+import { EmptyCatalogue } from "@/components/marketing/empty-catalogue";
+import { listDomainsOnServer } from "@/services/catalogue.server";
 
 export const metadata: Metadata = {
   title: "Internship domains",
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
     "Six verified virtual internship tracks — full stack, web, cyber security, generative AI, agentic AI and data science.",
 };
 
-export default function InternshipsPage() {
+export default async function InternshipsPage() {
+  const domains = await listDomainsOnServer();
+
   return (
     <>
       <PageHero
@@ -24,13 +27,17 @@ export default function InternshipsPage() {
       />
 
       <Container className="py-16 sm:py-20">
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {domains.map((domain, i) => (
-            <Reveal key={domain.id} delay={i * 0.05}>
-              <DomainCard domain={domain} className="h-full" />
-            </Reveal>
-          ))}
-        </div>
+        {domains.length === 0 ? (
+          <EmptyCatalogue />
+        ) : (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {domains.map((domain, i) => (
+              <Reveal key={domain.id} delay={i * 0.05}>
+                <DomainCard domain={domain} className="h-full" />
+              </Reveal>
+            ))}
+          </div>
+        )}
       </Container>
     </>
   );

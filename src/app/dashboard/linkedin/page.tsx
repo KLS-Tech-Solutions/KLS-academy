@@ -19,7 +19,7 @@ const checklist = [
 ];
 
 export default function LinkedInTaskPage() {
-  const { journey, setStage } = useJourney();
+  const { journey, refresh } = useJourney();
   const { offerLetter, linkedinSubmission } = journey;
 
   if (!offerLetter) {
@@ -94,13 +94,13 @@ export default function LinkedInTaskPage() {
               </dl>
 
               {linkedinSubmission.status === "rejected" && (
-                <Button className="mt-6" onClick={() => setStage("offer_letter_generated")}>
+                <Button className="mt-6" onClick={refresh}>
                   Resubmit post URL
                 </Button>
               )}
             </>
           ) : (
-            <LinkedInSubmissionForm onSubmitted={() => setStage("linkedin_submitted")} />
+            <LinkedInSubmissionForm onSubmitted={refresh} />
           )}
         </Card>
 

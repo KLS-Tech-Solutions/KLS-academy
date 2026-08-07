@@ -1,8 +1,10 @@
 /**
- * Runtime configuration. `USE_MOCKS` is the switch that lets the whole app run
- * with no backend — every service checks it before making a request.
+ * Runtime configuration.
+ *
+ * There is no mock mode. Every screen reads from the FastAPI backend through
+ * the proxy below — if the API is down, the app shows an error rather than
+ * quietly serving invented data.
  */
-export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
 
 /**
  * Browser requests go to the Next proxy, never to FastAPI directly. The proxy
@@ -10,10 +12,13 @@ export const USE_MOCKS = process.env.NEXT_PUBLIC_USE_MOCKS !== "false";
  */
 export const CLIENT_API_PREFIX = "/api/proxy";
 
-/** Server-only. Used by route handlers to reach FastAPI. */
+/** Server-only. Used by route handlers and server components. */
 export const SERVER_API_BASE_URL =
   process.env.API_BASE_URL ?? "http://localhost:8000/api/v1";
 
 export const AUTH_COOKIE = "kls_access";
 export const REFRESH_COOKIE = "kls_refresh";
 export const COOKIE_SECURE = process.env.COOKIE_SECURE === "true";
+
+/** Shown in the footer, contact page, error states and support copy. */
+export const SUPPORT_EMAIL = "klstechsolutions2025@gmail.com";

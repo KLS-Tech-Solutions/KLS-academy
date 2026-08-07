@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { USE_MOCKS } from "@/lib/api/config";
+
 import {
   callBackend,
   clearSessionCookies,
@@ -15,18 +15,14 @@ export async function POST() {
     return NextResponse.json({ detail: "No refresh token" }, { status: 401 });
   }
 
-  if (USE_MOCKS) {
-    await setSessionCookies({ access_token: "mock-access-token", refresh_token: refreshToken });
-    return NextResponse.json({ ok: true });
-  }
-
   const response = await callBackend("/auth/refresh", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ refresh_token: refreshToken }),
-  });
+  }).catch(() => null);
 
-  if (!response.ok) {
+  // Any failure clears the session — a half-valid session is worse than none.
+  if (response === null || !response.ok) {
     await clearSessionCookies();
     return NextResponse.json({ detail: "Session expired" }, { status: 401 });
   }

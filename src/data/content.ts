@@ -87,24 +87,3 @@ export const faqs = [
       "No. The certificate is only issued once every task has been approved. That is what makes it worth something.",
   },
 ];
-
-export const testimonials = [
-  {
-    name: "Priya S.",
-    role: "Final year, Information Science",
-    quote:
-      "The feedback on my first submission was more useful than an entire semester of lab work. I resubmitted twice and the code was genuinely better each time.",
-  },
-  {
-    name: "Aditya K.",
-    role: "B.Tech, Computer Science",
-    quote:
-      "Having a public repo and a deployed demo to point at changed how my interviews went. I stopped talking about coursework and started demonstrating.",
-  },
-  {
-    name: "Meera J.",
-    role: "MCA Student",
-    quote:
-      "The structure kept me honest. Clear deadlines, clear requirements, and a reviewer who actually checked whether the thing worked.",
-  },
-];

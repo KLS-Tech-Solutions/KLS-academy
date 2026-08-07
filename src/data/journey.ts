@@ -192,6 +192,7 @@ function buildSubmissions(stage: JourneyStage): TaskSubmission[] {
         "Implemented the required functionality with a documented architecture, tested each endpoint and captured the working screens.",
       status,
       submitted_at: status === "not_started" ? null : "2026-09-08T14:20:00Z",
+      attempt: rejected ? 2 : 1,
       screenshots: status === "not_started"
         ? []
         : [1, 2, 3].map((n) => ({

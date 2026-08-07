@@ -9,7 +9,7 @@ export type ISODate = string;
 
 /* --- users ---------------------------------------------------------------- */
 
-export type UserRole = "student" | "admin";
+export type UserRole = "student" | "admin" | "super_admin";
 export type UserStatus = "active" | "suspended" | "pending";
 
 export interface User {
@@ -61,6 +61,7 @@ export interface InternshipBatch {
   start_date: ISODate;
   end_date: ISODate;
   status: "upcoming" | "ongoing" | "closed";
+  seats_total: number;
   seats_left: number;
 }
 
@@ -141,6 +142,8 @@ export interface TaskSubmission {
   description: string;
   status: SubmissionStatus;
   submitted_at: ISODate | null;
+  /** Incremented on resubmission so reviewers can see the history. */
+  attempt: number;
   screenshots: TaskScreenshot[];
   review: AdminReview | null;
 }

@@ -125,6 +125,7 @@ export const batches: InternshipBatch[] = domains.map((d, i) => ({
   start_date: "2026-09-01T00:00:00Z",
   end_date: "2026-09-29T00:00:00Z",
   status: "upcoming",
+  seats_total: 50,
   seats_left: 40 - i * 3,
 }));
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, Download, FileText, Share2 } from "lucide-react";
+import { ArrowRight, Share2 } from "lucide-react";
 import { cn, formatDate } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/misc";
 import { LockedState } from "@/components/shared/primitives";
 import { DashboardHeader } from "@/components/dashboard/page-header";
+import { DownloadButton } from "@/components/dashboard/download-button";
 import { Logo } from "@/components/shared/Logo";
 import { MsmeBadge } from "@/components/shared/msme-badge";
 import { useJourney } from "@/hooks/use-journey";
@@ -36,10 +37,12 @@ export default function OfferLetterPage() {
         title="Offer letter"
         description="Download your offer letter, then share it on LinkedIn to unlock your technical tasks."
         action={
-          <Button>
-            <Download />
+          <DownloadButton
+            path="/me/offer-letter/download"
+            fallbackFilename="KLS-Offer-Letter.pdf"
+          >
             Download PDF
-          </Button>
+          </DownloadButton>
         }
       />
 
@@ -123,10 +126,15 @@ export default function OfferLetterPage() {
               ))}
             </dl>
 
-            <Button variant="secondary" full className="mt-6">
-              <FileText />
-              Open full PDF
-            </Button>
+            <DownloadButton
+              path="/me/offer-letter/download"
+              fallbackFilename="KLS-Offer-Letter.pdf"
+              variant="secondary"
+              full
+              className="mt-6"
+            >
+              Download a copy
+            </DownloadButton>
           </Card>
 
           <Card className="bg-canvas p-6">

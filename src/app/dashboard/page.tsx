@@ -18,6 +18,7 @@ import { SubmissionStatusBadge } from "@/components/shared/status";
 import { DashboardHeader, StatCard } from "@/components/dashboard/page-header";
 import { JourneyTimeline } from "@/components/dashboard/journey-timeline";
 import { NextActionCard } from "@/components/dashboard/next-action";
+import { ProfilePrompt } from "@/components/dashboard/profile-prompt";
 import { useJourney } from "@/hooks/use-journey";
 
 export default function DashboardPage() {
@@ -41,6 +42,8 @@ export default function DashboardPage() {
             : "You haven't enrolled in an internship yet. Pick a domain to get started."
         }
       />
+
+      <ProfilePrompt />
 
       <NextActionCard stage={stage} />
 

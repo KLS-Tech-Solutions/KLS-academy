@@ -1,12 +1,13 @@
 "use client";
 
-import { Award, Download, ExternalLink, QrCode, Share2 } from "lucide-react";
+import { Award, ExternalLink, QrCode, Share2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/misc";
 import { LockedState } from "@/components/shared/primitives";
 import { DashboardHeader } from "@/components/dashboard/page-header";
+import { DownloadButton } from "@/components/dashboard/download-button";
 import { CertificatePreview } from "@/components/marketing/certificate-preview";
 import { useJourney } from "@/hooks/use-journey";
 import { hasReached } from "@/types";
@@ -41,10 +42,12 @@ export default function CertificatePage() {
         title="Your certificate"
         description="Issued and verifiable. Download it, or share the verification link with anyone who asks."
         action={
-          <Button>
-            <Download />
+          <DownloadButton
+            path="/me/certificate/download"
+            fallbackFilename="KLS-Certificate.pdf"
+          >
             Download PDF
-          </Button>
+          </DownloadButton>
         }
       />
 

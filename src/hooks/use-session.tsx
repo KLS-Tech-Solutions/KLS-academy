@@ -16,7 +16,20 @@ export function useSession() {
   });
 }
 
-export function useLogin() {
+/**
+ * `next` is where to land after signing in — used by the verification email
+ * flow to drop a new student straight onto domain selection.
+ *
+ * Only same-origin paths are honoured. A `next` of `https://evil.example` or
+ * `//evil.example` would otherwise turn the login screen into an open
+ * redirect, and this value comes from the query string.
+ */
+function safeNext(next: string | null | undefined): string {
+  if (!next || !next.startsWith("/") || next.startsWith("//")) return "/dashboard";
+  return next;
+}
+
+export function useLogin(next?: string | null) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -25,7 +38,7 @@ export function useLogin() {
     onSuccess: ({ user }) => {
       queryClient.setQueryData(queryKeys.session, user);
       queryClient.invalidateQueries({ queryKey: queryKeys.journey.all });
-      router.push("/dashboard");
+      router.push(safeNext(next));
     },
   });
 }

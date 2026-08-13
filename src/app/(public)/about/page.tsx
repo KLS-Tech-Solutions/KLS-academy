@@ -111,7 +111,7 @@ export default function AboutPage() {
           {[
             { icon: GraduationCap, stat: "6", label: "Internship domains" },
             { icon: Handshake, stat: "100%", label: "Human-reviewed submissions" },
-            { icon: Target, stat: "₹50", label: "One-time certificate fee" },
+            { icon: Target, stat: "Free", label: "To enrol and complete" },
           ].map((item, i) => (
             <Reveal key={item.label} delay={i * 0.06}>
               <Card className="h-full p-6 text-center">

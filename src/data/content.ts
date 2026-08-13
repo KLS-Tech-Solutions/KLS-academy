@@ -8,7 +8,7 @@ export const journeySteps = [
   { title: "Build real projects", description: "Work through technical tasks with clear briefs and deadlines." },
   { title: "Submit for review", description: "GitHub repo, three screenshots and a written explanation." },
   { title: "Get approved", description: "A KLS reviewer approves your work or sends it back with notes." },
-  { title: "Earn your certificate", description: "Pay ₹50 and download a QR-verified certificate." },
+  { title: "Earn your certificate", description: "Settle the issuance fee and download a QR-verified certificate." },
 ];
 
 export const whyKls = [
@@ -34,7 +34,7 @@ export const whyKls = [
     icon: "wallet",
     title: "Free to learn",
     description:
-      "The internship costs nothing. You pay ₹50 only when you have finished and earned the certificate.",
+      "The internship costs nothing. A one-time issuance fee applies only when you have finished and earned the certificate.",
   },
   {
     icon: "building",
@@ -54,7 +54,7 @@ export const faqs = [
   {
     question: "Is the internship free?",
     answer:
-      "Yes. Enrolment, tasks and reviews cost nothing. A one-time ₹50 fee applies only when you have completed every task and want your certificate issued.",
+      "Yes. Enrolment, tasks and reviews cost nothing. A one-time issuance fee applies only when you have completed every task and want your certificate issued — the amount is set out in our terms of service.",
   },
   {
     question: "Is this a remote internship?",

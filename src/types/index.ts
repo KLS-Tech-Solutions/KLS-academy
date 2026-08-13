@@ -268,4 +268,37 @@ export interface StudentJourney {
   payment: Payment | null;
   certificate: Certificate | null;
   notifications: AppNotification[];
+  /** In paise, from the API config. Never hardcode the amount in the UI. */
+  certificate_fee_paise: number;
+  /**
+   * Every internship taken, newest first, the current one included and
+   * flagged. Drives the "My internships" screen — a student keeps access to
+   * the documents from every internship they have paid for.
+   */
+  history: InternshipHistoryEntry[];
+  /** True once the current internship is certificated. */
+  can_enroll_again: boolean;
+}
+
+/** One card on the internships screen. */
+export interface InternshipHistoryEntry {
+  enrollment_id: string;
+  batch_id: string;
+  batch_name: string;
+  domain_title: string;
+  domain_slug: string | null;
+  duration: string | null;
+  status: "active" | "completed" | "withdrawn";
+  enrolled_at: string;
+  completed_at: string | null;
+  is_current: boolean;
+
+  tasks_total: number;
+  tasks_approved: number;
+
+  offer_letter_number: string | null;
+  offer_letter_url: string | null;
+  certificate_number: string | null;
+  certificate_url: string | null;
+  certificate_issued_at: string | null;
 }

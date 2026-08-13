@@ -83,7 +83,7 @@ export default async function HomePage() {
             </div>
 
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-body">
-              {["Free to enrol", "100% remote", "₹50 only for the certificate"].map(
+              {["Free to enrol", "100% remote", "Certificate on completion"].map(
                 (item) => (
                   <li key={item} className="inline-flex items-center gap-2">
                     <CheckCircle2 className="size-4 text-accent" />

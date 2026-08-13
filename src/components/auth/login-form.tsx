@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { CheckCircle2, Eye, EyeOff, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField, useZodForm } from "@/components/ui/form";
@@ -14,8 +15,13 @@ import { loginSchema, type LoginValues } from "@/lib/validation";
 
 export function LoginForm() {
   const { toast } = useToast();
+  const params = useSearchParams();
   const [show, setShow] = React.useState(false);
-  const loginMutation = useLogin();
+
+  // Both set by the verification email flow: `verified` shows the banner,
+  // `next` sends the student on to pick a domain instead of the dashboard.
+  const justVerified = params.get("verified") === "1";
+  const loginMutation = useLogin(params.get("next"));
 
   const form = useZodForm(loginSchema, {
     defaultValues: { email: "", password: "", remember: false },
@@ -32,6 +38,15 @@ export function LoginForm() {
       noValidate
       onSubmit={form.handleSubmit(onSubmit)}
     >
+      {justVerified && !loginMutation.isError && (
+        <Alert variant="success">
+          <span className="inline-flex items-center gap-2">
+            <CheckCircle2 className="size-4 shrink-0" />
+            Email verified. Sign in to choose your internship.
+          </span>
+        </Alert>
+      )}
+
       {loginMutation.isError && (
         <Alert variant="danger">
           {isApiError(loginMutation.error)

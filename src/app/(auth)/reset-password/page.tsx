@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { ResetPasswordForm } from "@/components/auth/password-forms";
 
@@ -12,7 +13,9 @@ export default function ResetPasswordPage() {
         Choose a password you haven&apos;t used before.
       </p>
 
-      <ResetPasswordForm />
+      <Suspense fallback={null}>
+        <ResetPasswordForm />
+      </Suspense>
     </Card>
   );
 }

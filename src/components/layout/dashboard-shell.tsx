@@ -7,6 +7,7 @@ import {
   Award,
   Bell,
   ClipboardList,
+  GraduationCap,
   CreditCard,
   FileText,
   LayoutDashboard,
@@ -30,6 +31,9 @@ const nav = [
   { href: "/dashboard/tasks", label: "Tasks", icon: ClipboardList, unlocksAt: "linkedin_approved" },
   { href: "/dashboard/payment", label: "Payment", icon: CreditCard, unlocksAt: "all_tasks_approved" },
   { href: "/dashboard/certificate", label: "Certificate", icon: Award, unlocksAt: "certificate_issued" },
+  // Always available: a student who has taken anything at all has something
+  // here, and the documents from past internships never expire.
+  { href: "/dashboard/internships", label: "My internships", icon: GraduationCap, unlocksAt: null },
 ] as const;
 
 const secondaryNav = [
@@ -62,14 +66,18 @@ function ShellWithJourney({ children }: { children: React.ReactNode }) {
   const isActive = (href: string) =>
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href);
 
+  /*
+    Brand pinned at the top, account actions pinned at the bottom, nav scrolls
+    between them — so sign-out stays reachable on short windows.
+  */
   const sidebar = (
-    <div className="flex h-full flex-col gap-6 p-4">
-      <Link href="/" className="flex items-center gap-2.5 px-2 text-ink">
+    <div className="flex h-full min-h-0 flex-col p-4">
+      <Link href="/" className="mb-6 flex shrink-0 items-center gap-2.5 px-2 pr-10 text-ink">
         <Logo className="h-7 w-auto" />
         <span className="text-[15px] font-semibold">Academy</span>
       </Link>
 
-      <nav className="flex flex-col gap-1">
+      <nav className="-mr-2 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain pr-2">
         {nav.map((item) => {
           const locked = item.unlocksAt ? !hasReached(stage, item.unlocksAt) : false;
           return (
@@ -96,7 +104,7 @@ function ShellWithJourney({ children }: { children: React.ReactNode }) {
         })}
       </nav>
 
-      <div className="mt-auto flex flex-col gap-1 border-t border-line pt-4">
+      <div className="mt-4 shrink-0 flex flex-col gap-1 border-t border-line pt-4">
         {secondaryNav.map((item) => (
           <Link
             key={item.href}
@@ -139,7 +147,7 @@ function ShellWithJourney({ children }: { children: React.ReactNode }) {
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-ink/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-72 bg-white shadow-lift">
+          <aside className="absolute inset-y-0 left-0 flex w-[min(18rem,85vw)] flex-col bg-white shadow-lift">
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -204,12 +212,12 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-canvas">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-line bg-white lg:block">
-        <div className="flex h-full flex-col gap-6 p-4">
-          <Link href="/" className="flex items-center gap-2.5 px-2 text-ink">
+        <div className="flex h-full min-h-0 flex-col p-4">
+          <Link href="/" className="mb-6 flex shrink-0 items-center gap-2.5 px-2 pr-10 text-ink">
             <Logo className="h-7 w-auto" />
             <span className="text-[15px] font-semibold">Academy</span>
           </Link>
-          <nav className="flex flex-col gap-1">
+          <nav className="-mr-2 flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-2">
             {nav.map((item) => (
               <span
                 key={item.href}

@@ -25,7 +25,7 @@ export default function CertificatePage() {
           description={
             paid
               ? "Payment is confirmed. Your certificate is being generated and will appear here in a moment."
-              : "Your certificate is generated once every task is approved and the ₹50 issuance fee is paid."
+              : "Your certificate is generated once every task is approved and the issuance fee is paid."
           }
           unlockHint={paid ? "Generating now" : "Unlocks after payment"}
           action={{ label: paid ? "Back to dashboard" : "Go to payment", href: paid ? "/dashboard" : "/dashboard/payment" }}

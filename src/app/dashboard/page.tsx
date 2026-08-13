@@ -19,11 +19,13 @@ import { DashboardHeader, StatCard } from "@/components/dashboard/page-header";
 import { JourneyTimeline } from "@/components/dashboard/journey-timeline";
 import { NextActionCard } from "@/components/dashboard/next-action";
 import { ProfilePrompt } from "@/components/dashboard/profile-prompt";
+import { InternshipComplete } from "@/components/dashboard/internship-complete";
 import { useJourney } from "@/hooks/use-journey";
 
 export default function DashboardPage() {
   const { journey, stage } = useJourney();
-  const { user, domain, submissions, tasks, certificate, notifications } = journey;
+  const { user, domain, submissions, tasks, certificate, notifications, history } =
+    journey;
 
   const technicalTasks = tasks.filter((t) => t.order_number > 0);
   const approved = submissions.filter((s) => s.status === "approved").length;
@@ -45,12 +47,16 @@ export default function DashboardPage() {
 
       <ProfilePrompt />
 
-      <NextActionCard stage={stage} />
+      {journey.can_enroll_again ? (
+        <InternshipComplete />
+      ) : (
+        <NextActionCard stage={stage} />
+      )}
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          label="Active internship"
-          value={domain ? "01" : "00"}
+          label="Internships"
+          value={String(history.length).padStart(2, "0")}
           hint={domain ? domain.title : "None selected"}
           icon={<ClipboardList />}
         />
@@ -62,8 +68,12 @@ export default function DashboardPage() {
         />
         <StatCard
           label="Certificates earned"
-          value={certificate ? "01" : "00"}
-          hint={certificate ? certificate.certificate_number : "Not issued yet"}
+          value={String(
+            history.filter((h) => h.certificate_number).length,
+          ).padStart(2, "0")}
+          hint={
+            certificate ? certificate.certificate_number : "Not issued yet"
+          }
           icon={<Award />}
         />
         <StatCard

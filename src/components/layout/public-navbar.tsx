@@ -41,9 +41,15 @@ export function PublicNavbar() {
           scrolled ? "shadow-nav" : "shadow-soft",
         )}
       >
-        <Link href="/" className="flex items-center gap-2.5 text-ink" aria-label="KLS Academy home">
+        <Link
+          href="/"
+          className="flex shrink-0 items-center gap-2.5 text-ink"
+          aria-label="KLS Academy home"
+        >
           <Logo className="h-8 w-auto" priority />
-          <span className="text-[15px] font-semibold">Academy</span>
+          {/* At 360px the mark, the wordmark, the CTA and the menu button do
+              not all fit. The mark alone carries the brand on a phone. */}
+          <span className="hidden text-[15px] font-semibold sm:inline">Academy</span>
         </Link>
 
         <ul className="hidden items-center gap-1 lg:flex">
@@ -64,7 +70,7 @@ export function PublicNavbar() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Link
             href="/login"
             className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "hidden sm:inline-flex")}

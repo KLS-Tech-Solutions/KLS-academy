@@ -168,7 +168,7 @@ export default async function DomainDetailPage({
                 Enrol now — free
               </Link>
               <p className="mt-3 text-center text-[13px] text-muted">
-                ₹50 applies only when you claim your certificate.
+                A one-time fee applies only when you claim your certificate.
               </p>
             </Card>
 

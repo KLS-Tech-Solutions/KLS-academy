@@ -54,10 +54,13 @@ export default function TasksPage() {
       <ul className="flex flex-col gap-4">
         {technical.map((task, i) => {
           const submission = submissions.find((s) => s.task_id === task.id);
-          const previousApproved =
+
+          // Unlocked once the previous task has been *submitted* — waiting for
+          // a reviewer should never stop a student working.
+          const previousSubmitted =
             i === 0 ||
-            submissions.find((s) => s.task_id === technical[i - 1].id)?.status === "approved";
-          const locked = !previousApproved;
+            Boolean(submissions.find((s) => s.task_id === technical[i - 1].id));
+          const locked = !previousSubmitted;
 
           const content = (
             <Card
@@ -79,6 +82,11 @@ export default function TasksPage() {
                         <Clock className="size-3.5" />
                         Due {formatDate(task.deadline)}
                       </span>
+                      {locked && (
+                        <span className="text-warning">
+                          Submit task {task.order_number - 1} to unlock
+                        </span>
+                      )}
                       <span>~{task.estimated_hours} hours</span>
                       <span>{task.requirements.length} requirements</span>
                     </div>

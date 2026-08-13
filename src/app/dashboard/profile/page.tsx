@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/misc";
 import { DashboardHeader } from "@/components/dashboard/page-header";
 import { ProfileForm } from "@/components/dashboard/profile-form";
+import { DeleteAccount } from "@/components/dashboard/delete-account";
 import { useJourney } from "@/hooks/use-journey";
 import { formatDate } from "@/lib/utils";
 
@@ -30,6 +31,8 @@ export default function ProfilePage() {
       </Card>
 
       <ProfileForm user={user} profile={profile} />
+
+      <DeleteAccount />
     </div>
   );
 }

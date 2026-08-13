@@ -46,13 +46,13 @@ const actions: Record<
   },
   all_tasks_approved: {
     title: "Every task is approved — claim your certificate",
-    body: "Pay the one-time ₹50 issuance fee to generate your QR-verified certificate.",
+    body: "Pay the one-time issuance fee to generate your QR-verified certificate.",
     cta: "Go to payment",
     href: "/dashboard/payment",
   },
   payment_pending: {
     title: "Complete your certificate payment",
-    body: "Your certificate is generated immediately after the ₹50 payment is confirmed.",
+    body: "Your certificate is generated immediately after payment is confirmed.",
     cta: "Complete payment",
     href: "/dashboard/payment",
   },

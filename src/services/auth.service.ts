@@ -57,6 +57,14 @@ export function verifyEmail(token: string) {
   return authRequest<{ ok: true }>("verify-email", { token });
 }
 
+/**
+ * Always resolves, whatever the server says — the endpoint deliberately does
+ * not reveal whether an address is registered or already verified.
+ */
+export function resendVerification(email: string) {
+  return authRequest<{ ok: true }>("resend-verification", { email });
+}
+
 /** Returns null rather than throwing when nobody is signed in. */
 export async function getSession(): Promise<User | null> {
   try {
@@ -68,4 +76,12 @@ export async function getSession(): Promise<User | null> {
     }
     throw error;
   }
+}
+
+/**
+ * Closes the account. The current password is required because this cannot be
+ * undone and an unattended session should not be enough to trigger it.
+ */
+export function deleteAccount(password: string) {
+  return authRequest<{ ok: true }>("delete-account", { password });
 }

@@ -150,7 +150,7 @@ export default function TaskDetailPage() {
                   <dt className="text-[13px] text-muted">
                     Screenshots ({submission.screenshots.length})
                   </dt>
-                  <dd className="mt-2 grid grid-cols-3 gap-3">
+                  <dd className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {submission.screenshots.map((shot) => (
                       <div
                         key={shot.id}

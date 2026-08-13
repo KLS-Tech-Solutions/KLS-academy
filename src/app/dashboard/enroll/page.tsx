@@ -31,7 +31,29 @@ export default function EnrollPage() {
   const batchesQuery = useBatches(domain?.id);
   const batch = batchesQuery.data?.[0] ?? null;
 
-  if (journey.enrollment && journey.domain) {
+  // `enrollment` is the *current* internship, which may be a completed one.
+  // Only an unfinished internship blocks starting another — otherwise a
+  // student who has finished would be told to finish it.
+  const inProgress = Boolean(
+    journey.enrollment && journey.domain && !journey.can_enroll_again,
+  );
+
+  const startingAnother = journey.history.length > 0;
+
+  // A domain already taken is not offered again. Submissions are keyed by
+  // task, so re-enrolling in the same batch would count the old approvals
+  // towards the new internship — the API refuses it with a 409, and offering
+  // it here would only produce that error.
+  const available = React.useMemo(() => {
+    const taken = new Set(
+      journey.history
+        .map((entry) => entry.domain_slug)
+        .filter((slug): slug is string => Boolean(slug)),
+    );
+    return domains.filter((d) => !taken.has(d.slug));
+  }, [domains, journey.history]);
+
+  if (inProgress && journey.domain && journey.enrollment) {
     return (
       <div className="mx-auto flex max-w-6xl flex-col gap-8">
         <DashboardHeader title="Enrolment" />
@@ -43,8 +65,9 @@ export default function EnrollPage() {
             You&apos;re enrolled in {journey.domain.title}
           </h2>
           <p className="mt-2 max-w-lg text-[15px] leading-relaxed text-body">
-            Enrolled on {formatDate(journey.enrollment.enrolled_at)}. A student can hold
-            one active internship at a time — finish this one to enrol in another.
+            Enrolled on {formatDate(journey.enrollment.enrolled_at)}. Finish this
+            internship — every task approved and the certificate issued — and you
+            can start another in a different domain.
           </p>
           <Button className="mt-6" onClick={() => router.push("/dashboard")}>
             Back to dashboard
@@ -57,13 +80,18 @@ export default function EnrollPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
       <DashboardHeader
-        title="Choose your internship domain"
+        title={
+          startingAnother
+            ? "Choose your next internship"
+            : "Choose your internship domain"
+        }
         description="Pick the track you want to work in. Your offer letter is generated immediately after you confirm."
       />
 
       <Alert variant="info">
-        You can hold one active internship at a time. Choose carefully — switching later
-        means starting the task sequence again.
+        {startingAnother
+          ? "Your previous internships and their certificates stay in My internships — nothing is replaced. A domain you have already completed is not shown again."
+          : "You hold one internship at a time. Once it's finished and your certificate is issued, you can start another in a different domain."}
       </Alert>
 
       {domainsQuery.isPending ? (
@@ -88,16 +116,32 @@ export default function EnrollPage() {
             }
           />
         </Card>
-      ) : domains.length === 0 ? (
+      ) : available.length === 0 ? (
         <Card className="p-6">
           <EmptyState
-            title="No internships are open yet"
-            description="Enrolment opens as soon as the next batch is published. We'll notify you."
+            title={
+              startingAnother
+                ? "You've taken every internship we offer"
+                : "No internships are open yet"
+            }
+            description={
+              startingAnother
+                ? "New domains are added regularly — we'll let you know as soon as one opens."
+                : "Enrolment opens as soon as the next batch is published. We'll notify you."
+            }
+            action={
+              <Button
+                variant="secondary"
+                onClick={() => router.push("/dashboard/internships")}
+              >
+                My internships
+              </Button>
+            }
           />
         </Card>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {domains.map((d) => (
+          {available.map((d) => (
             <button
               key={d.id}
               type="button"
@@ -173,7 +217,7 @@ export default function EnrollPage() {
             )}
             <div className="flex justify-between gap-4">
               <dt className="text-muted">Cost</dt>
-              <dd className="font-medium text-ink">Free — ₹50 for the certificate</dd>
+              <dd className="font-medium text-ink">Free to enrol</dd>
             </div>
           </dl>
         )}

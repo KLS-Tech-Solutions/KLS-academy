@@ -19,7 +19,11 @@ export default function LoginPage() {
         Sign in to continue your internship.
       </p>
 
-      <LoginForm />
+      {/* Reads `next` and `verified` from the query string, so it needs a
+          boundary for static rendering. */}
+      <Suspense fallback={null}>
+        <LoginForm />
+      </Suspense>
 
       <p className="mt-6 text-center text-[15px] text-body">
         New to KLS Academy?{" "}

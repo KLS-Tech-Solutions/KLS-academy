@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { CheckCircle2, CreditCard, Lock, ShieldCheck } from "lucide-react";
-import { formatDateTime } from "@/lib/utils";
+import { formatCurrency, formatDateTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
@@ -15,8 +15,6 @@ import { useJourney } from "@/hooks/use-journey";
 import { useConfirmPayment, useCreatePaymentOrder } from "@/hooks/mutations";
 import { isApiError } from "@/lib/api/errors";
 import { hasReached } from "@/types";
-
-const CERTIFICATE_FEE = 50;
 
 export default function PaymentPage() {
   const { journey, stage, refresh } = useJourney();
@@ -57,6 +55,10 @@ export default function PaymentPage() {
   };
 
   const paid = hasReached(stage, "paid");
+
+  // The amount comes from the API so the fee is configured in one place. It
+  // has to be shown here — nobody should be asked to pay an unstated amount.
+  const fee = formatCurrency(journey.certificate_fee_paise / 100);
 
   if (!hasReached(stage, "all_tasks_approved")) {
     const approved = journey.submissions.filter((s) => s.status === "approved").length;
@@ -108,7 +110,7 @@ export default function PaymentPage() {
                   {journey.domain?.title ?? "Internship certificate"}
                 </dd>
               </div>
-              <span className="text-[15px] font-medium text-ink">₹{CERTIFICATE_FEE}</span>
+              <span className="text-[15px] font-medium text-ink">{fee}</span>
             </div>
 
             <div className="flex items-center justify-between gap-4 border-t border-line pt-4">
@@ -118,7 +120,7 @@ export default function PaymentPage() {
 
             <div className="flex items-center justify-between gap-4 border-t border-line pt-4">
               <dt className="text-lg font-semibold text-ink">Total</dt>
-              <dd className="text-2xl font-bold text-ink">₹{CERTIFICATE_FEE}</dd>
+              <dd className="text-2xl font-bold text-ink">{fee}</dd>
             </div>
           </dl>
 
@@ -130,7 +132,7 @@ export default function PaymentPage() {
           ) : (
             <Button size="lg" full className="mt-8" onClick={() => setCheckoutOpen(true)}>
               <CreditCard />
-              Pay ₹{CERTIFICATE_FEE} securely
+              Pay {fee} securely
             </Button>
           )}
 
@@ -174,7 +176,7 @@ export default function PaymentPage() {
         open={checkoutOpen}
         onClose={() => !processing && setCheckoutOpen(false)}
         title="Confirm payment"
-        description={`You're paying ₹${CERTIFICATE_FEE} to issue your certificate.`}
+        description={`You're paying ${fee} to issue your certificate.`}
         size="sm"
         footer={
           <>
@@ -186,7 +188,7 @@ export default function PaymentPage() {
               Cancel
             </Button>
             <Button disabled={processing} onClick={startPayment}>
-              {processing ? "Processing…" : `Pay ₹${CERTIFICATE_FEE}`}
+              {processing ? "Processing…" : `Pay ${fee}`}
             </Button>
           </>
         }

@@ -3,8 +3,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/query-keys";
 import {
-  confirmPayment,
-  createPaymentOrder,
   enrollInDomain,
   markNotificationsRead,
   submitLinkedInPost,
@@ -46,17 +44,6 @@ export function useSubmitTask() {
   });
 }
 
-export function useCreatePaymentOrder() {
-  return useMutation({ mutationFn: createPaymentOrder });
-}
-
-export function useConfirmPayment() {
-  const invalidate = useJourneyInvalidator();
-  return useMutation({
-    mutationFn: confirmPayment,
-    onSuccess: invalidate,
-  });
-}
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient();

@@ -4,11 +4,15 @@ import { Card } from "@/components/ui/card";
 import { Container, PageHero, SectionHeader } from "@/components/shared/primitives";
 import { VerifyForm } from "@/components/marketing/verify-form";
 
-export const metadata: Metadata = {
-  title: "Verify a certificate",
+import { pageMeta } from "@/lib/seo";
+
+export const metadata = pageMeta({
+  title: "Verify a Certificate",
   description:
-    "Check whether a KLS Academy certificate is genuine using its certificate number or QR code.",
-};
+    "Check any KLS Academy certificate instantly. Enter the certificate number to confirm the holder, the domain and the issue date.",
+  path: "/verify",
+});
+
 
 export default function VerifyPage() {
   return (

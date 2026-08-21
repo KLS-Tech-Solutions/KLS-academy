@@ -6,9 +6,9 @@ import { usePathname } from "next/navigation";
 import {
   Award,
   Bell,
+  BookOpen,
   ClipboardList,
   GraduationCap,
-  CreditCard,
   FileText,
   LayoutDashboard,
   Share2,
@@ -28,8 +28,8 @@ const nav = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, unlocksAt: null },
   { href: "/dashboard/offer-letter", label: "Offer letter", icon: FileText, unlocksAt: "offer_letter_generated" },
   { href: "/dashboard/linkedin", label: "LinkedIn task", icon: Share2, unlocksAt: "offer_letter_generated" },
+  { href: "/dashboard/notes", label: "Study notes", icon: BookOpen, unlocksAt: "offer_letter_generated" },
   { href: "/dashboard/tasks", label: "Tasks", icon: ClipboardList, unlocksAt: "linkedin_approved" },
-  { href: "/dashboard/payment", label: "Payment", icon: CreditCard, unlocksAt: "all_tasks_approved" },
   { href: "/dashboard/certificate", label: "Certificate", icon: Award, unlocksAt: "certificate_issued" },
   // Always available: a student who has taken anything at all has something
   // here, and the documents from past internships never expire.

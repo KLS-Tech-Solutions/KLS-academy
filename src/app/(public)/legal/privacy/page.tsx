@@ -1,4 +1,12 @@
-export const metadata = { title: "Privacy policy" };
+
+import { pageMeta } from "@/lib/seo";
+
+export const metadata = pageMeta({
+  title: "Privacy Policy",
+  description:
+    "What data KLS Academy collects, why, and how it is handled.",
+  path: "/legal/privacy",
+});
 
 export default function PrivacyPage() {
   return (
@@ -11,7 +19,6 @@ export default function PrivacyPage() {
         <li>Account details: name, email address and phone number.</li>
         <li>Profile details: college, degree, branch, year, LinkedIn and GitHub links.</li>
         <li>Submission content: repository links, screenshots and written explanations.</li>
-        <li>Payment records: transaction identifiers returned by our payment provider.</li>
       </ul>
 
       <h2>How we use it</h2>

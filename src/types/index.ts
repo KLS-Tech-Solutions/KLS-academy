@@ -171,16 +171,7 @@ export interface AdminReview {
 
 /* --- money & credentials --------------------------------------------------- */
 
-export type PaymentStatus = "created" | "pending" | "success" | "failed";
 
-export interface Payment {
-  id: UUID;
-  student_id: UUID;
-  transaction_id: string;
-  amount: number;
-  payment_status: PaymentStatus;
-  paid_at: ISODate | null;
-}
 
 export interface Certificate {
   id: UUID;
@@ -231,8 +222,6 @@ export type JourneyStage =
   | "linkedin_approved"
   | "tasks_in_progress"
   | "all_tasks_approved"
-  | "payment_pending"
-  | "paid"
   | "certificate_issued";
 
 export const JOURNEY_ORDER: JourneyStage[] = [
@@ -243,8 +232,6 @@ export const JOURNEY_ORDER: JourneyStage[] = [
   "linkedin_approved",
   "tasks_in_progress",
   "all_tasks_approved",
-  "payment_pending",
-  "paid",
   "certificate_issued",
 ];
 
@@ -265,11 +252,8 @@ export interface StudentJourney {
   linkedinSubmission: LinkedInSubmission | null;
   tasks: Task[];
   submissions: TaskSubmission[];
-  payment: Payment | null;
   certificate: Certificate | null;
   notifications: AppNotification[];
-  /** In paise, from the API config. Never hardcode the amount in the UI. */
-  certificate_fee_paise: number;
   /**
    * Every internship taken, newest first, the current one included and
    * flagged. Drives the "My internships" screen — a student keeps access to
@@ -301,4 +285,21 @@ export interface InternshipHistoryEntry {
   certificate_number: string | null;
   certificate_url: string | null;
   certificate_issued_at: string | null;
+}
+
+/** One chapter of study notes for an internship domain. */
+export interface LearningChapter {
+  id: string;
+  domain_id: string;
+  title: string;
+  summary: string | null;
+  order_number: number;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  pdf_url: string | null;
+  pdf_filename: string | null;
+  pdf_size_bytes: number | null;
+  estimated_minutes: number;
+  status: "active" | "inactive";
+  /** Per-student, set by the notes endpoint. */
+  is_read: boolean;
 }

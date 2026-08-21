@@ -7,7 +7,6 @@ const steps: { stage: JourneyStage; label: string; description: string }[] = [
   { stage: "offer_letter_generated", label: "Offer letter", description: "Generated and ready to download" },
   { stage: "linkedin_approved", label: "LinkedIn verified", description: "Post approved, technical tasks unlocked" },
   { stage: "all_tasks_approved", label: "Tasks approved", description: "Every submission signed off" },
-  { stage: "paid", label: "Payment", description: "Certificate fee settled" },
   { stage: "certificate_issued", label: "Certificate", description: "Issued with QR verification" },
 ];
 

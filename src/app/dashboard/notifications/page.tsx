@@ -58,7 +58,7 @@ export default function NotificationsPage() {
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
       <DashboardHeader
         title="Notifications"
-        description="Updates on your offer letter, submissions, payment and certificate."
+        description="Updates on your offer letter, submissions and certificate."
         action={
           unread.length > 0 ? (
             <Button

@@ -33,9 +33,7 @@ export const queryKeys = {
     submission: (taskId: string) => ["tasks", taskId, "submission"] as const,
   },
 
-  payment: {
-    current: ["payment"] as const,
-  },
+  chapters: ["chapters"] as const,
 
   certificate: {
     mine: ["certificate", "mine"] as const,

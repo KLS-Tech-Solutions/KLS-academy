@@ -45,20 +45,8 @@ const actions: Record<
     href: "/dashboard/tasks",
   },
   all_tasks_approved: {
-    title: "Every task is approved — claim your certificate",
-    body: "Pay the one-time issuance fee to generate your QR-verified certificate.",
-    cta: "Go to payment",
-    href: "/dashboard/payment",
-  },
-  payment_pending: {
-    title: "Complete your certificate payment",
-    body: "Your certificate is generated immediately after payment is confirmed.",
-    cta: "Complete payment",
-    href: "/dashboard/payment",
-  },
-  paid: {
-    title: "Payment received — your certificate is being issued",
-    body: "This takes a moment. You'll be notified the second it's ready to download.",
+    title: "Every task is approved",
+    body: "Your certificate is being issued — it appears here in a moment.",
     cta: "View certificate",
     href: "/dashboard/certificate",
   },

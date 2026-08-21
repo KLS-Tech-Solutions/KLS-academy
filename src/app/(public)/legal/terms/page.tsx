@@ -1,4 +1,12 @@
-export const metadata = { title: "Terms of service" };
+
+import { pageMeta } from "@/lib/seo";
+
+export const metadata = pageMeta({
+  title: "Terms of Service",
+  description:
+    "The terms governing use of KLS Academy.",
+  path: "/legal/terms",
+});
 
 export default function TermsPage() {
   return (

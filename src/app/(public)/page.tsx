@@ -22,7 +22,22 @@ import { DomainCard } from "@/components/marketing/domain-card";
 import { EmptyCatalogue } from "@/components/marketing/empty-catalogue";
 import { CertificatePreview } from "@/components/marketing/certificate-preview";
 import { listDomainsOnServer } from "@/services/catalogue.server";
+import { BreadcrumbSchema, FaqSchema } from "@/components/shared/structured-data";
+import { pageMeta } from "@/lib/seo";
 import { faqs, journeySteps, whyKls } from "@/data/content";
+
+export const metadata = pageMeta({
+  title: "Free Verified Virtual Internships",
+  description:
+    "Free virtual internships with real project work, engineer-reviewed submissions and QR-verified certificates. No fees at any stage. Open source, from KLS Tech Solutions, Bangalore.",
+  path: "/",
+  keywords: [
+    "free virtual internship",
+    "online internship with certificate India",
+    "verified internship certificate",
+    "remote internship for students",
+  ],
+});
 
 const whyIcons: Record<string, LucideIcon> = {
   briefcase: Briefcase,
@@ -38,6 +53,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <FaqSchema />
+      <BreadcrumbSchema trail={[{ name: "Home", path: "/" }]} />
       {/* ---------------------------------------------------------------- */}
       {/* Hero                                                              */}
       {/* ---------------------------------------------------------------- */}

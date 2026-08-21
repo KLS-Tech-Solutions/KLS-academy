@@ -7,11 +7,15 @@ import { Card } from "@/components/ui/card";
 import { Container, PageHero, SectionHeader } from "@/components/shared/primitives";
 import { Reveal } from "@/components/shared/reveal";
 
-export const metadata: Metadata = {
+import { pageMeta } from "@/lib/seo";
+
+export const metadata = pageMeta({
   title: "About",
   description:
-    "KLS Academy is the learning arm of KLS Tech Solutions — structured virtual internships built from real engineering work.",
-};
+    "KLS Academy is the learning division of KLS Tech Solutions, an MSME registered organisation in Bangalore. Free, open-source virtual internships.",
+  path: "/about",
+});
+
 
 const philosophy = [
   {

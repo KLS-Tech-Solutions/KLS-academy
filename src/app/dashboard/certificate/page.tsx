@@ -17,18 +17,24 @@ export default function CertificatePage() {
   const { certificate } = journey;
 
   if (!certificate) {
-    const paid = hasReached(stage, "paid");
+    // The internship is free, so finishing the work is the only condition —
+    // the certificate is issued the moment a reviewer approves the last task.
+    const finished = hasReached(stage, "all_tasks_approved");
     return (
       <div className="mx-auto max-w-4xl">
         <LockedState
-          title={paid ? "Your certificate is being issued" : "Certificate is locked"}
-          description={
-            paid
-              ? "Payment is confirmed. Your certificate is being generated and will appear here in a moment."
-              : "Your certificate is generated once every task is approved and the issuance fee is paid."
+          title={
+            finished ? "Your certificate is being issued" : "Certificate is locked"
           }
-          unlockHint={paid ? "Generating now" : "Unlocks after payment"}
-          action={{ label: paid ? "Back to dashboard" : "Go to payment", href: paid ? "/dashboard" : "/dashboard/payment" }}
+          description={
+            finished
+              ? "Every task is approved. Your certificate is being generated and will appear here in a moment."
+              : "Your certificate is issued automatically once a reviewer approves your final task. There is nothing to pay."
+          }
+          unlockHint={
+            finished ? "Generating now" : "Unlocks when every task is approved"
+          }
+          action={{ label: "Back to dashboard", href: "/dashboard" }}
         />
       </div>
     );

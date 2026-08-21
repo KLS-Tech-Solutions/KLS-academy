@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/misc";
 import { LockedState } from "@/components/shared/primitives";
 import { SubmissionStatusBadge } from "@/components/shared/status";
 import { DashboardHeader } from "@/components/dashboard/page-header";
+import { NotesPrompt } from "@/components/dashboard/notes-prompt";
 import { useJourney } from "@/hooks/use-journey";
 import { hasReached } from "@/types";
 
@@ -38,6 +39,8 @@ export default function TasksPage() {
         title="Technical tasks"
         description="Work through these in order. Each one needs a GitHub repository, at least three screenshots and a written explanation."
       />
+
+      <NotesPrompt />
 
       <Card className="p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">

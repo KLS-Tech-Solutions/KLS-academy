@@ -12,6 +12,12 @@ import { Reveal } from "@/components/shared/reveal";
 import { getBatchOnServer, getDomainOnServer } from "@/services/catalogue.server";
 import { faqs } from "@/data/content";
 import { formatDate } from "@/lib/utils";
+import { pageMeta } from "@/lib/seo";
+import {
+  BreadcrumbSchema,
+  CourseSchema,
+  FaqSchema,
+} from "@/components/shared/structured-data";
 
 export async function generateMetadata({
   params,
@@ -21,7 +27,17 @@ export async function generateMetadata({
   const { slug } = await params;
   const domain = await getDomainOnServer(slug);
   if (!domain) return { title: "Internship not found" };
-  return { title: domain.title, description: domain.description };
+
+  return pageMeta({
+    title: `${domain.title} Internship`,
+    description: `${domain.description} Free, ${domain.duration}, fully remote, with a QR-verified certificate on completion.`,
+    path: `/internships/${slug}`,
+    keywords: [
+      `${domain.title} internship`,
+      `free ${domain.title} internship`,
+      "virtual internship with certificate",
+    ],
+  });
 }
 
 export default async function DomainDetailPage({
@@ -44,6 +60,22 @@ export default async function DomainDetailPage({
 
   return (
     <>
+      <CourseSchema
+        title={domain.title}
+        description={domain.description}
+        slug={domain.slug}
+        duration={domain.duration}
+        difficulty={domain.difficulty}
+      />
+      <FaqSchema />
+      <BreadcrumbSchema
+        trail={[
+          { name: "Home", path: "/" },
+          { name: "Internships", path: "/internships" },
+          { name: domain.title, path: `/internships/${domain.slug}` },
+        ]}
+      />
+
       <section className="relative overflow-hidden border-b border-line">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="bg-grid bg-grid-fade absolute inset-0" />

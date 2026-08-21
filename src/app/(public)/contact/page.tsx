@@ -5,10 +5,15 @@ import { Container, PageHero } from "@/components/shared/primitives";
 import { SUPPORT_EMAIL } from "@/lib/api/config";
 import { ContactForm } from "@/components/marketing/contact-form";
 
-export const metadata: Metadata = {
+import { pageMeta } from "@/lib/seo";
+
+export const metadata = pageMeta({
   title: "Contact",
-  description: "Get in touch with the KLS Academy team.",
-};
+  description:
+    "Get in touch with KLS Academy. Email klstechsolutions2025@gmail.com or use the form — we reply within two working days.",
+  path: "/contact",
+});
+
 
 const details = [
   {

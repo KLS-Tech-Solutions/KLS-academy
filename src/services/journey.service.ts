@@ -1,7 +1,7 @@
 import { apiRequest } from "@/lib/api/client";
 import type {
+  LearningChapter,
   AppNotification,
-  Payment,
   StudentJourney,
   StudentProfile,
   TaskSubmission,
@@ -12,7 +12,7 @@ import type { ProfileValues } from "@/lib/validation";
  * GET /me/journey
  *
  * The aggregate the dashboard renders from — stage, enrolment, tasks,
- * submissions, payment, certificate and notifications in one round trip.
+ * submissions, certificate and notifications in one round trip.
  * The backend owns `stage`; nothing here infers it.
  */
 export function getMyJourney() {
@@ -63,24 +63,6 @@ export function submitTask(input: TaskSubmissionInput) {
   });
 }
 
-/** POST /payments/order */
-export function createPaymentOrder() {
-  return apiRequest<{
-    order_id: string;
-    amount: number;
-    currency: string;
-    key_id: string;
-  }>("/payments/order", { method: "POST" });
-}
-
-/** POST /payments/verify — the backend checks the Razorpay signature. */
-export function confirmPayment(payload: {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-}) {
-  return apiRequest<Payment>("/payments/verify", { method: "POST", body: payload });
-}
 
 /** PATCH /me/profile */
 export function updateProfile(values: ProfileValues) {
@@ -98,4 +80,16 @@ export function markNotificationsRead(ids: string[]) {
     method: "PATCH",
     body: { ids },
   });
+}
+
+// --- Study notes -----------------------------------------------------------
+
+/** GET /me/chapters — the notes for the internship currently being taken. */
+export function getMyChapters() {
+  return apiRequest<LearningChapter[]>("/me/chapters");
+}
+
+/** POST /me/chapters/{id}/read — idempotent. */
+export function markChapterRead(chapterId: string) {
+  return apiRequest<void>(`/me/chapters/${chapterId}/read`, { method: "POST" });
 }

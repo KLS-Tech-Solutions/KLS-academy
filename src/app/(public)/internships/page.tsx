@@ -5,11 +5,15 @@ import { DomainCard } from "@/components/marketing/domain-card";
 import { EmptyCatalogue } from "@/components/marketing/empty-catalogue";
 import { listDomainsOnServer } from "@/services/catalogue.server";
 
-export const metadata: Metadata = {
-  title: "Internship domains",
+import { pageMeta } from "@/lib/seo";
+
+export const metadata = pageMeta({
+  title: "Internship Domains",
   description:
-    "Six verified virtual internship tracks — full stack, web, cyber security, generative AI, agentic AI and data science.",
-};
+    "Browse every free virtual internship at KLS Academy. Real project work, engineer-reviewed, with a QR-verified certificate on completion.",
+  path: "/internships",
+});
+
 
 export default async function InternshipsPage() {
   const domains = await listDomainsOnServer();

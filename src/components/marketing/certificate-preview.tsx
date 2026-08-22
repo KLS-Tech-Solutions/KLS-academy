@@ -10,7 +10,7 @@ import { MsmeBadge } from "@/components/shared/msme-badge";
 export function CertificatePreview({
   name = "Ananya Rao",
   domain = "Full Stack Python Development",
-  certificateNumber = "KLS-ACAD-2026-00184",
+  certificateNumber = "KLS-CERT-7F3K9QM2XZ",
   issuedOn = "26 Sep 2026",
   className,
 }: {

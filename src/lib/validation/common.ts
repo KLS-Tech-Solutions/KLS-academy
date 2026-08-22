@@ -41,6 +41,82 @@ export const phone = z
       ),
   );
 
+/**
+ * The minimum age to register.
+ *
+ * The DPDP Act 2023 treats anyone under 18 as a child and requires verifiable
+ * parental consent before their data may be processed. We have no consent
+ * mechanism, so we do not take their data at all. Mirrors `MINIMUM_AGE` on
+ * the API — the server is the authority, this is here so the person finds out
+ * before submitting rather than after.
+ */
+export const MINIMUM_AGE = 18;
+
+/**
+ * Completed years between two dates.
+ *
+ * Reads UTC components throughout. Both arguments are built from `Date.UTC`,
+ * and mixing in a local getter here would shift the month and day by a day in
+ * any zone west of Greenwich — enough to move a birthday across the boundary.
+ */
+function completedYears(born: Date, today: Date): number {
+  const hadBirthday =
+    today.getUTCMonth() > born.getUTCMonth() ||
+    (today.getUTCMonth() === born.getUTCMonth() &&
+      today.getUTCDate() >= born.getUTCDate());
+  return today.getUTCFullYear() - born.getUTCFullYear() - (hadBirthday ? 0 : 1);
+}
+
+/**
+ * Date of birth, as an `<input type="date">` gives it: `YYYY-MM-DD`.
+ *
+ * Parsed with `Date.UTC` rather than `new Date(string)`, because the latter
+ * reads a bare date string as UTC midnight and then reports it in local time —
+ * which in India (UTC+5:30) is the same day, but west of Greenwich is the day
+ * before. A birthday that shifts by a day decides the boundary case wrongly.
+ */
+export const dateOfBirth = z
+  .string()
+  .min(1, "Date of birth is required")
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Enter your date of birth")
+  .superRefine((value, ctx) => {
+    const [year, month, day] = value.split("-").map(Number);
+    const born = new Date(Date.UTC(year, month - 1, day));
+
+    // Rejects 2026-02-31, which the constructor would roll forward to March.
+    if (
+      born.getUTCFullYear() !== year ||
+      born.getUTCMonth() !== month - 1 ||
+      born.getUTCDate() !== day
+    ) {
+      ctx.addIssue({ code: "custom", message: "Enter a valid date of birth" });
+      return;
+    }
+
+    const now = new Date();
+    const today = new Date(
+      Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()),
+    );
+
+    if (born > today) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Date of birth cannot be in the future",
+      });
+      return;
+    }
+    if (year < 1900) {
+      ctx.addIssue({ code: "custom", message: "Enter a valid date of birth" });
+      return;
+    }
+    if (completedYears(born, today) < MINIMUM_AGE) {
+      ctx.addIssue({
+        code: "custom",
+        message: `You must be at least ${MINIMUM_AGE} to register`,
+      });
+    }
+  });
+
 export const password = z
   .string()
   .min(8, "Use at least 8 characters")
@@ -98,14 +174,24 @@ export const linkedinPostUrl = z
     "Link directly to the post, e.g. https://linkedin.com/posts/…",
   );
 
+/**
+ * A certificate number: `KLS-CERT-` plus ten Crockford Base32 characters.
+ *
+ * The alphabet excludes I, L, O and U, so a number read off a printed
+ * certificate cannot be mistyped into a different valid one. This regex must
+ * track `ALPHABET` and `LENGTH` in `app/services/numbering.py` — it replaced
+ * a pattern for the old sequential `KLS-ACAD-2026-00184` scheme, which by then
+ * matched nothing the platform issues and rejected every real number before it
+ * reached the server.
+ */
 export const certificateNumber = z
   .string()
   .trim()
   .toUpperCase()
   .min(1, "Certificate number is required")
   .regex(
-    /^KLS-ACAD-\d{4}-\d{5}$/,
-    "Certificate numbers look like KLS-ACAD-2026-00184",
+    /^KLS-CERT-[0-9ABCDEFGHJKMNPQRSTVWXYZ]{10}$/,
+    "Certificate numbers look like KLS-CERT-7F3K9QM2XZ",
   );
 
 /** Optional text field: empty string is allowed, anything else must validate. */

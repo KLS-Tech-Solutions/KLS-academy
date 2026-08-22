@@ -62,7 +62,7 @@ export default function VerifyPage() {
         <Card className="mt-8 bg-canvas p-6 text-center">
           <p className="text-[15px] text-body">
             Try a sample:{" "}
-            <span className="font-mono font-medium text-ink">KLS-ACAD-2026-00184</span>
+            <span className="font-mono font-medium text-ink">KLS-CERT-7F3K9QM2XZ</span>
           </p>
         </Card>
       </Container>

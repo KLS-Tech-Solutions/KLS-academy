@@ -14,7 +14,7 @@ import { contactSchema, type ContactValues } from "@/lib/validation";
 const topics = [
   { value: "internship", label: "Internship enquiry" },
   { value: "submission", label: "Existing submission" },
-  { value: "certificate", label: "Certificate or payment" },
+  { value: "certificate", label: "Certificate or verification" },
   { value: "partnership", label: "College or hiring partnership" },
   { value: "other", label: "Something else" },
 ];

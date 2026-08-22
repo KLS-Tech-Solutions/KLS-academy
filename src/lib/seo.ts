@@ -17,7 +17,10 @@ export const SITE = {
   region: "Karnataka",
   postalCode: "560027",
   country: "IN",
-  tagline: "Free verified virtual internships",
+  tagline:
+    "Free, open-source virtual internships with free chapter-wise learning material",
+  /** MIT. Named here so the licence claim has one source. */
+  license: "https://opensource.org/licenses/MIT",
 } as const;
 
 /**
@@ -74,17 +77,37 @@ export const FAQ: { question: string; answer: string }[] = [
   {
     question: "Is KLS Academy free?",
     answer:
-      "Yes. KLS Academy is completely free. There is no enrolment fee, no certificate fee and no payment of any kind at any stage. The platform is open source under the MIT licence.",
+      "Yes. KLS Academy is completely free. There is no enrolment fee, no certificate fee, and no payment of any kind at any stage. We never ask for card or bank details. The platform itself is open source under the MIT licence.",
+  },
+  {
+    question: "Does KLS Academy provide free study material?",
+    answer:
+      "Yes. Every internship domain includes a full set of chapter-wise study notes as downloadable PDFs, ordered from beginner to advanced. They are free, they are yours to keep, and you get them the moment you sign up — you do not have to enrol, finish anything, or pay to unlock them.",
+  },
+  {
+    question: "How do I start learning on KLS Academy?",
+    answer:
+      "Sign up with your name, email and date of birth. That is the whole gate. You can then read the chapter-wise PDF notes for any domain, and enrol in an internship whenever you are ready to start the project tasks.",
+  },
+  {
+    question: "What is the KLS Academy learning roadmap?",
+    answer:
+      "Each domain has a chapter-by-chapter roadmap that runs from beginner to advanced. You read the chapters in order as downloadable PDFs, then apply them on the internship's technical tasks, which are reviewed by a KLS engineer. Learning and doing sit in the same place.",
   },
   {
     question: "How do I get a certificate from KLS Academy?",
     answer:
-      "Enrol in a domain, share your offer letter on LinkedIn for verification, then complete each technical task. Every submission is reviewed by a KLS engineer. Your certificate is issued automatically the moment your final task is approved.",
+      "Enrol in a domain, share your offer letter on LinkedIn for verification, then complete each technical task. Every submission is reviewed by a KLS engineer. Your certificate is issued automatically the moment your final task is approved, at no cost.",
   },
   {
     question: "Are KLS Academy certificates verifiable by employers?",
     answer:
-      "Yes. Every certificate carries a unique number and a QR code linking to a public verification page. An employer can confirm it independently in seconds, without contacting KLS Tech Solutions.",
+      "Yes. Every certificate carries a unique number and a QR code linking to a public verification page. An employer can confirm it independently in seconds, without contacting KLS Tech Solutions and without needing an account.",
+  },
+  {
+    question: "Is KLS Academy open source?",
+    answer:
+      "Yes. The KLS Academy platform is released under the MIT licence, so anyone can read the code, run their own instance, or contribute to it. The KLS Tech Solutions name, logo and seal are not covered by that licence, and only certificates verifiable at academy.klstechsolutions.in were issued by us.",
   },
   {
     question: "How long does a KLS Academy internship take?",
@@ -97,9 +120,9 @@ export const FAQ: { question: string; answer: string }[] = [
       "Typically a public GitHub repository, at least three screenshots of your working project, and a short written explanation of what you built and why. The exact requirements are shown on each task.",
   },
   {
-    question: "Do I get study material?",
+    question: "What happens if my submission is rejected?",
     answer:
-      "Yes. Each domain includes chapter-wise study notes as downloadable PDFs, ordered from beginner to advanced. They are optional but strongly recommended before starting the technical tasks.",
+      "You get specific written feedback and can resubmit. There is no limit on resubmissions and no penalty for one. The aim is to get the work right, not to fail you.",
   },
   {
     question: "Can I do more than one internship at KLS Academy?",
@@ -107,8 +130,13 @@ export const FAQ: { question: string; answer: string }[] = [
       "Yes. Once your current internship is complete and your certificate is issued, you can start another in a different domain. Every certificate and offer letter you earn stays downloadable for good.",
   },
   {
+    question: "Who can join KLS Academy?",
+    answer:
+      "Anyone aged 18 or over can register. We ask for a date of birth because India's Digital Personal Data Protection Act, 2023 requires verifiable parental consent to process data belonging to under-18s, which we do not collect.",
+  },
+  {
     question: "Who runs KLS Academy?",
     answer:
-      "KLS Academy is the learning division of KLS Tech Solutions, an MSME registered organisation based in Bangalore, India.",
+      "KLS Academy is the learning division of KLS Tech Solutions, an MSME registered organisation based in Bangalore, India, which builds IoT, SaaS and AI products.",
   },
 ];

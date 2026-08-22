@@ -9,15 +9,18 @@ import { SITE } from "@/lib/seo";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: "KLS Academy — Free Verified Virtual Internships",
+    default: "KLS Academy — Free Virtual Internships & Free Learning Material",
     template: "%s | KLS Academy",
   },
   description:
-    "Free virtual internships with real project work, engineer-reviewed submissions and QR-verified certificates. Open source, built by KLS Tech Solutions, Bangalore.",
+    "Free and open source. Sign up for chapter-wise study notes as PDFs, beginner to advanced, in every domain — plus engineer-reviewed project work and a QR-verified certificate. No fee at any stage.",
   applicationName: SITE.name,
   keywords: [
     "virtual internship",
     "free internship India",
+    "free learning material pdf",
+    "chapter wise notes beginner to advanced",
+    "open source learning platform",
     "online internship with certificate",
     "backend development internship",
     "verified internship certificate",
@@ -33,16 +36,16 @@ export const metadata: Metadata = {
     siteName: SITE.name,
     url: SITE.url,
     locale: "en_IN",
-    title: "KLS Academy — Free Verified Virtual Internships",
+    title: "KLS Academy — Free Virtual Internships & Free Learning Material",
     description:
-      "Real project work, reviewed by engineers, ending in a certificate any employer can verify. Free and open source.",
+      "Free chapter-wise PDF notes from beginner to advanced, real project work reviewed by engineers, and a certificate any employer can verify. Free and open source.",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: "KLS Academy" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "KLS Academy — Free Verified Virtual Internships",
+    title: "KLS Academy — Free Virtual Internships & Free Learning Material",
     description:
-      "Real project work, reviewed by engineers, ending in a certificate any employer can verify.",
+      "Free chapter-wise PDF notes, engineer-reviewed project work, and a verifiable certificate. All free, all open source.",
     images: ["/og.png"],
   },
   robots: {

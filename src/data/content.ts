@@ -1,89 +1,150 @@
-/** Static marketing copy. Lives in data/ so it can move to a CMS later. */
+/**
+ * Static marketing copy. Lives in `data/` so it can move to a CMS later.
+ *
+ * One rule for everything in this file: it describes a platform that is free
+ * and open source, where the study material is available on signup. Any
+ * sentence implying a fee, a paywall, or a gate before the notes is wrong.
+ */
 
+import { FAQ } from "@/lib/seo";
+
+/**
+ * The visible FAQ.
+ *
+ * **Re-exported from `lib/seo.ts` rather than written out again**, and that is
+ * the entire point. There used to be two arrays — one rendered in the
+ * accordion, one emitted as FAQPage JSON-LD — and they drifted: the structured
+ * data told Google the platform was free while the accordion on the same page
+ * still promised a certificate fee. Beyond being untrue, mismatched FAQ schema
+ * is exactly what Google demotes a rich result for. One array cannot disagree
+ * with itself.
+ */
+export const faqs = FAQ;
+
+/**
+ * The student journey, in the order it happens.
+ *
+ * Reading the notes sits before the tasks because that is how the product
+ * works — the material is available the moment an account exists, and the
+ * technical work assumes it.
+ */
 export const journeySteps = [
-  { title: "Register", description: "Create your KLS Academy account in under a minute." },
-  { title: "Choose a domain", description: "Pick the internship track that matches your goals." },
-  { title: "Get your offer letter", description: "A signed PDF offer letter is generated instantly." },
-  { title: "Share on LinkedIn", description: "Post your offer letter and submit the link for verification." },
-  { title: "Build real projects", description: "Work through technical tasks with clear briefs and deadlines." },
-  { title: "Submit for review", description: "GitHub repo, three screenshots and a written explanation." },
-  { title: "Get approved", description: "A KLS reviewer approves your work or sends it back with notes." },
-  { title: "Earn your certificate", description: "Settle the issuance fee and download a QR-verified certificate." },
+  {
+    title: "Sign up free",
+    description: "Create your account in under a minute. No card, ever.",
+  },
+  {
+    title: "Read the chapters",
+    description:
+      "Beginner-to-advanced study notes, as PDFs you download and keep.",
+  },
+  {
+    title: "Choose a domain",
+    description: "Pick the internship track that matches where you're heading.",
+  },
+  {
+    title: "Get your offer letter",
+    description: "A branded PDF offer letter is generated instantly.",
+  },
+  {
+    title: "Share on LinkedIn",
+    description: "Post your offer letter and submit the link for verification.",
+  },
+  {
+    title: "Build real projects",
+    description: "Work through technical tasks written from real briefs.",
+  },
+  {
+    title: "Get reviewed",
+    description:
+      "A KLS engineer approves your work or returns it with specific notes.",
+  },
+  {
+    title: "Earn your certificate",
+    description:
+      "Issued automatically when your last task is approved. Free, QR-verified.",
+  },
 ];
 
 export const whyKls = [
   {
+    icon: "book",
+    title: "Free learning library",
+    description:
+      "Chapter-wise study notes for every domain, beginner to advanced, as downloadable PDFs. Available the moment you sign up — no enrolment required to start reading.",
+  },
+  {
     icon: "briefcase",
     title: "Real project work",
     description:
-      "Every task mirrors work our engineers actually do — no quizzes, no video-only modules.",
+      "Every task mirrors work our engineers actually do — no quizzes, no video-only modules, no certificate for watching something.",
   },
   {
     icon: "user-check",
     title: "Reviewed by humans",
     description:
-      "A KLS reviewer reads your code and explanation, then approves or returns it with specific notes.",
+      "A KLS engineer reads your code and your explanation, then approves it or returns it with specific notes. Nothing here is auto-graded.",
   },
   {
     icon: "shield-check",
     title: "Verifiable credentials",
     description:
-      "Every certificate carries a unique number and QR code that anyone can verify publicly.",
+      "Every certificate carries a unique number and a QR code that anyone can verify publicly, with no login and no email to us.",
   },
   {
     icon: "wallet",
-    title: "Free to learn",
+    title: "Free, with nothing held back",
     description:
-      "The internship costs nothing. A one-time issuance fee applies only when you have finished and earned the certificate.",
+      "No enrolment fee, no certificate fee, no premium tier and no card details. The whole platform is free for everyone, permanently.",
   },
   {
-    icon: "building",
-    title: "Backed by a product company",
+    icon: "code",
+    title: "Open source",
     description:
-      "KLS Tech Solutions builds IoT, SaaS and AI products. The curriculum comes from that work.",
-  },
-  {
-    icon: "rocket",
-    title: "Portfolio you can show",
-    description:
-      "You finish with public repositories, a deployed demo and a written record of what you built.",
+      "Released under the MIT licence. Read the code, run your own instance, or contribute — how your work is reviewed and stored is not a black box.",
   },
 ];
 
-export const faqs = [
+/**
+ * The learning roadmap, as three rungs.
+ *
+ * Deliberately generic: the real chapters are per-domain and managed by admins,
+ * so naming specific ones here would be a promise the catalogue has to keep.
+ * What is true for every domain is the shape — ordered, cumulative, and it
+ * ends where the internship tasks begin.
+ */
+export const roadmapStages = [
   {
-    question: "Is the internship free?",
-    answer:
-      "Yes. Enrolment, tasks and reviews cost nothing. A one-time issuance fee applies only when you have completed every task and want your certificate issued — the amount is set out in our terms of service.",
+    level: "Beginner",
+    title: "Foundations",
+    description:
+      "The language, the tools and the vocabulary. Written for someone starting the domain from zero, with nothing assumed.",
+    outcomes: [
+      "Set up a working environment",
+      "Core concepts, explained plainly",
+      "Your first working build",
+    ],
   },
   {
-    question: "Is this a remote internship?",
-    answer:
-      "Entirely remote and self-paced within the batch window. You work on your own schedule and submit before each task deadline.",
+    level: "Intermediate",
+    title: "Building properly",
+    description:
+      "Structure, patterns and the practices that separate code that runs from code someone else can work on.",
+    outcomes: [
+      "Project structure and conventions",
+      "Working with data and APIs",
+      "Testing and debugging",
+    ],
   },
   {
-    question: "What do I need to submit for each task?",
-    answer:
-      "A public GitHub repository, a minimum of three screenshots of your working project, and a detailed written explanation of your implementation. A live demo link is optional but recommended.",
-  },
-  {
-    question: "Why do I have to post on LinkedIn?",
-    answer:
-      "It confirms you have received your offer letter and starts building your professional record. Technical tasks unlock once a reviewer verifies the post.",
-  },
-  {
-    question: "What if my submission is rejected?",
-    answer:
-      "You get specific written feedback and can resubmit. There is no limit on resubmissions — the goal is to get the work right, not to fail you.",
-  },
-  {
-    question: "How does certificate verification work?",
-    answer:
-      "Each certificate carries a unique number and a QR code. Anyone — a recruiter, a college — can scan it or enter the number on our verification page to confirm it is genuine.",
-  },
-  {
-    question: "Do I get a certificate if I do not finish every task?",
-    answer:
-      "No. The certificate is only issued once every task has been approved. That is what makes it worth something.",
+    level: "Advanced",
+    title: "Production thinking",
+    description:
+      "The parts most tutorials stop before: performance, security, deployment, and the judgement calls in between.",
+    outcomes: [
+      "Performance and security",
+      "Deployment and operations",
+      "Reviewing and being reviewed",
+    ],
   },
 ];

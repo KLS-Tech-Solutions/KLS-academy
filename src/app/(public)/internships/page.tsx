@@ -10,8 +10,13 @@ import { pageMeta } from "@/lib/seo";
 export const metadata = pageMeta({
   title: "Internship Domains",
   description:
-    "Browse every free virtual internship at KLS Academy. Real project work, engineer-reviewed, with a QR-verified certificate on completion.",
+    "Browse every free virtual internship at KLS Academy. Each domain includes free chapter-wise study notes from beginner to advanced, engineer-reviewed project work, and a QR-verified certificate. No fee at any stage.",
   path: "/internships",
+  keywords: [
+    "free internship domains",
+    "free study material per domain",
+    "beginner to advanced chapters",
+  ],
 });
 
 

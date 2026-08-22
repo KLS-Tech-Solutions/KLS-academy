@@ -35,7 +35,7 @@ export function VerifyForm({ defaultValue = "" }: { defaultValue?: string }) {
             invalid={Boolean(error)}
             aria-label="Certificate number"
             aria-describedby={error ? "certificate_number-error" : undefined}
-            placeholder="KLS-ACAD-2026-00184"
+            placeholder="KLS-CERT-7F3K9QM2XZ"
             className="h-12 pl-11 font-mono uppercase"
           />
         </div>

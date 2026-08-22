@@ -200,7 +200,7 @@ export default async function DomainDetailPage({
                 Enrol now — free
               </Link>
               <p className="mt-3 text-center text-[13px] text-muted">
-                A one-time fee applies only when you claim your certificate.
+                Free study notes included. No fee at any stage.
               </p>
             </Card>
 

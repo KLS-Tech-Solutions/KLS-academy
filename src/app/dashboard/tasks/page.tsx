@@ -48,7 +48,7 @@ export default function TasksPage() {
             {approved} of {technical.length} tasks approved
           </p>
           <p className="text-[13px] text-muted">
-            All tasks must be approved before payment unlocks
+            Your certificate is issued when the last one is approved
           </p>
         </div>
         <Progress value={progress} showLabel className="mt-4" />

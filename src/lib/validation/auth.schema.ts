@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { email, fullName, password, phone } from "./common";
+import { dateOfBirth, email, fullName, password, phone } from "./common";
 
 export const loginSchema = z.object({
   email,
@@ -13,6 +13,7 @@ export const registerSchema = z
     full_name: fullName,
     email,
     phone,
+    date_of_birth: dateOfBirth,
     password,
     confirm_password: z.string().min(1, "Confirm your password"),
     accept_terms: z.literal(true, {

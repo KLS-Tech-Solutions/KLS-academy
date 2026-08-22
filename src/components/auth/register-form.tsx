@@ -10,9 +10,25 @@ import { Alert } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/toast";
 import { useRegister } from "@/hooks/use-session";
 import { isApiError } from "@/lib/api/errors";
-import { registerSchema, type RegisterValues } from "@/lib/validation";
+import { MINIMUM_AGE, registerSchema, type RegisterValues } from "@/lib/validation";
+
+/**
+ * The latest date that could belong to someone old enough to register.
+ *
+ * Fed to the input's `max`, so the native picker will not offer a date that
+ * the schema is going to reject a moment later. It is a courtesy, not a
+ * control — the schema and the API both still check.
+ */
+function latestEligibleBirthDate(): string {
+  const today = new Date();
+  const cutoff = new Date(
+    Date.UTC(today.getFullYear() - MINIMUM_AGE, today.getMonth(), today.getDate()),
+  );
+  return cutoff.toISOString().slice(0, 10);
+}
 
 export function RegisterForm() {
+  const maxBirthDate = React.useMemo(latestEligibleBirthDate, []);
   const { toast } = useToast();
   const [show, setShow] = React.useState(false);
   const registerMutation = useRegister();
@@ -22,6 +38,7 @@ export function RegisterForm() {
       full_name: "",
       email: "",
       phone: "",
+      date_of_birth: "",
       password: "",
       confirm_password: "",
     },
@@ -101,6 +118,31 @@ export function RegisterForm() {
             type="tel"
             autoComplete="tel"
             placeholder="98450 12345"
+          />
+        )}
+      </FormField>
+
+      {/*
+        Asked for because Indian data protection law requires verifiable
+        parental consent to hold a under-18's data, and we have no way to
+        collect it. The hint says so — a date field with no explanation on a
+        signup form reads as data collection for its own sake.
+      */}
+      <FormField
+        form={form}
+        name="date_of_birth"
+        label="Date of birth"
+        required
+        hint={`You must be ${MINIMUM_AGE} or over to register.`}
+      >
+        {(field) => (
+          <Input
+            {...field}
+            {...form.register("date_of_birth")}
+            type="date"
+            autoComplete="bday"
+            max={maxBirthDate}
+            className="[&::-webkit-calendar-picker-indicator]:cursor-pointer"
           />
         )}
       </FormField>

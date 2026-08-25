@@ -24,10 +24,22 @@ export function LoginForm() {
   const loginMutation = useLogin(params.get("next"));
 
   const form = useZodForm(loginSchema, {
-    defaultValues: { email: "", password: "", remember: false },
+    defaultValues: {
+      email: "",
+      password: "",
+      remember: false,
+      // Deliberately not pre-ticked. A box that arrives already checked is not
+      // an agreement, and under the DPDP Act consent has to be an affirmative
+      // action by the person giving it.
+      accept_terms: false as unknown as true,
+    },
   });
 
-  const onSubmit = async (values: LoginValues) => {
+  const onSubmit = async ({ accept_terms: _accepted, ...values }: LoginValues) => {
+    // `accept_terms` is a client-side gate. It is not sent to the API, which
+    // authenticates on the credentials alone — a checkbox in a browser is not
+    // something a server can verify, and pretending otherwise would put a
+    // meaningless field in the request.
     await loginMutation.mutateAsync(values);
     toast({ title: "Signed in", description: "Welcome back to KLS Academy.", variant: "success" });
   };
@@ -105,6 +117,38 @@ export function LoginForm() {
         >
           Forgot password?
         </Link>
+      </div>
+
+      {/*
+        Terms are re-confirmed on every sign-in, not only at registration.
+        Someone who agreed a year ago has not seen the version in force today,
+        and the links are right here so reading them is one click rather than a
+        hunt through the footer.
+      */}
+      <div className="flex flex-col gap-2 border-t border-line pt-5">
+        <label className="flex items-start gap-3 text-sm leading-relaxed text-body">
+          <input
+            type="checkbox"
+            {...form.register("accept_terms")}
+            className="mt-1 size-4 shrink-0 rounded border-line accent-[var(--color-brand)]"
+          />
+          <span>
+            I agree to the{" "}
+            <Link href="/legal/terms" className="font-medium text-brand hover:underline">
+              terms of service
+            </Link>{" "}
+            and{" "}
+            <Link href="/legal/privacy" className="font-medium text-brand hover:underline">
+              privacy policy
+            </Link>
+            .
+          </span>
+        </label>
+        {form.formState.errors.accept_terms && (
+          <p role="alert" className="text-[13px] text-danger">
+            {form.formState.errors.accept_terms.message}
+          </p>
+        )}
       </div>
 
       <Button type="submit" size="lg" full disabled={loginMutation.isPending}>

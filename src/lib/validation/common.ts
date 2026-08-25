@@ -42,6 +42,77 @@ export const phone = z
   );
 
 /**
+ * The same rule, but the field may be left empty.
+ *
+ * Nothing in the platform sends an SMS or places a call — every workflow runs
+ * on email — so requiring a number was collecting personal data with no use
+ * for it. Still validated when given: a number that is present and wrong is
+ * worse than no number, because it looks like a way to reach someone.
+ *
+ * Empty becomes `undefined`, not `""`, so the API stores NULL rather than a
+ * blank that later reads as "they gave us a number".
+ */
+export const optionalPhone = z
+  .string()
+  .trim()
+  .transform((value) => value.replace(/[\s-()]/g, ""))
+  .refine(
+    (value) => value === "" || /^(\+91)?[6-9]\d{9}$/.test(value),
+    "Enter a valid 10-digit Indian mobile number, or leave this blank",
+  )
+  .transform((value) => (value === "" ? undefined : value))
+  // `.optional()` on the outside, so the key may be absent altogether and not
+  // merely empty. Without it the field is still required — it just has to be
+  // present and blank, which is not what "optional" means to anything calling
+  // this, and it would reject a payload that the API accepts happily.
+  .optional();
+
+/**
+ * States and union territories of India.
+ *
+ * A picker rather than a free-text box, because "Karnataka", "karnataka",
+ * "KA" and "Bangalore" in the same column make the data useless for the one
+ * thing it is for — knowing where students are coming from.
+ */
+export const INDIAN_STATES = [
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
+  "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram",
+  "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal",
+  // Union territories.
+  "Andaman and Nicobar Islands", "Chandigarh",
+  "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Jammu and Kashmir",
+  "Ladakh", "Lakshadweep", "Puducherry",
+] as const;
+
+/**
+ * Countries offered in the picker.
+ *
+ * Not the full ISO list. India first because that is nearly everyone, then the
+ * places students most often write from, then an escape hatch — a 195-entry
+ * dropdown to choose the obvious answer is worse than a short one that admits
+ * it is short.
+ */
+export const COUNTRIES = [
+  "India", "United States", "United Kingdom", "Canada", "Australia",
+  "United Arab Emirates", "Singapore", "Germany", "Nepal", "Sri Lanka",
+  "Bangladesh", "Other",
+] as const;
+
+export const state = z
+  .string()
+  .trim()
+  .min(1, "Select your state")
+  .max(80, "State must be under 80 characters");
+
+export const country = z
+  .string()
+  .trim()
+  .min(1, "Select your country")
+  .max(80, "Country must be under 80 characters");
+
+/**
  * The minimum age to register.
  *
  * The DPDP Act 2023 treats anyone under 18 as a child and requires verifiable

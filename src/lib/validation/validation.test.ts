@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  COUNTRIES,
+  INDIAN_STATES,
   MINIMUM_AGE,
   certificateNumber,
   forgotPasswordSchema,
@@ -31,6 +33,8 @@ describe("registerSchema", () => {
     full_name: "Ananya Rao",
     email: "ananya@example.com",
     phone: "9845012345",
+    state: "Karnataka",
+    country: "India",
     // Derived, not written out. A literal date is an adult today and a test
     // failure in some future year.
     date_of_birth: dob(22),
@@ -86,6 +90,71 @@ describe("registerSchema", () => {
     expect(registerSchema.safeParse({ ...valid, full_name: "A" }).success).toBe(
       false,
     );
+  });
+
+  describe("phone", () => {
+    it("may be left out entirely", () => {
+      const { phone: _omitted, ...without } = valid;
+      expect(registerSchema.safeParse(without).success).toBe(true);
+    });
+
+    it("may be left empty, and becomes undefined rather than an empty string", () => {
+      // The API stores NULL. A blank string would later read as "they gave us
+      // a number", which is a different fact.
+      const result = registerSchema.safeParse({ ...valid, phone: "   " });
+      expect(result.success).toBe(true);
+      if (result.success) expect(result.data.phone).toBeUndefined();
+    });
+
+    it("is still validated when one is given", () => {
+      // Optional is not unchecked. A wrong number looks like a way to reach
+      // someone and is worse than no number at all.
+      expect(
+        registerSchema.safeParse({ ...valid, phone: "1234567890" }).success,
+      ).toBe(false);
+    });
+
+    it("accepts the +91 prefix and punctuation", () => {
+      for (const input of ["+919845012345", "98450 12345", "98450-12345"]) {
+        expect(registerSchema.safeParse({ ...valid, phone: input }).success).toBe(
+          true,
+        );
+      }
+    });
+  });
+
+  describe("state and country", () => {
+    it("requires both", () => {
+      expect(registerSchema.safeParse({ ...valid, state: "" }).success).toBe(false);
+      expect(registerSchema.safeParse({ ...valid, country: "" }).success).toBe(
+        false,
+      );
+    });
+
+    it("lists every Indian state and union territory", () => {
+      // 28 states plus 8 union territories.
+      expect(INDIAN_STATES).toHaveLength(36);
+      expect(INDIAN_STATES).toContain("Karnataka");
+      expect(INDIAN_STATES).toContain("Ladakh");
+      expect(new Set(INDIAN_STATES).size).toBe(INDIAN_STATES.length);
+    });
+
+    it("offers India first, and an escape hatch last", () => {
+      // India is nearly everyone, so it is the default rather than a decision.
+      expect(COUNTRIES[0]).toBe("India");
+      expect(COUNTRIES[COUNTRIES.length - 1]).toBe("Other");
+    });
+
+    it("accepts a state that is not Indian", () => {
+      // The field becomes free text once the country is not India.
+      expect(
+        registerSchema.safeParse({
+          ...valid,
+          country: "Canada",
+          state: "British Columbia",
+        }).success,
+      ).toBe(true);
+    });
   });
 
   describe("date of birth", () => {
@@ -210,25 +279,41 @@ describe("certificateNumber", () => {
 });
 
 describe("loginSchema", () => {
+  const valid = {
+    email: "ananya@example.com",
+    password: "kls12345",
+    remember: false,
+    accept_terms: true,
+  };
+
   it("accepts an email and any non-empty password", () => {
-    const result = loginSchema.safeParse({
-      email: "ananya@example.com",
-      password: "kls12345",
-      remember: false,
-    });
-    expect(result.success).toBe(true);
+    expect(loginSchema.safeParse(valid).success).toBe(true);
   });
 
   it("does not apply the registration password rules to signing in", () => {
     // An account created before the rules tightened must still be able to log
     // in. Applying the strength rule here would lock those people out of
     // their own accounts with no route to a reset.
-    const result = loginSchema.safeParse({
-      email: "old@example.com",
-      password: "short",
-      remember: false,
-    });
-    expect(result.success).toBe(true);
+    expect(
+      loginSchema.safeParse({ ...valid, email: "old@example.com", password: "short" })
+        .success,
+    ).toBe(true);
+  });
+
+  it("blocks sign-in until the terms are accepted", () => {
+    // Re-confirmed at every sign-in, not only at registration: someone who
+    // agreed a year ago has not seen the version in force today.
+    for (const accept_terms of [false, undefined]) {
+      expect(loginSchema.safeParse({ ...valid, accept_terms }).success).toBe(false);
+    }
+  });
+
+  it("names the terms field on the error, so it lands under the checkbox", () => {
+    const result = loginSchema.safeParse({ ...valid, accept_terms: false });
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues.flatMap((i) => i.path)).toContain("accept_terms");
+    }
   });
 });
 

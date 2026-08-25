@@ -1,10 +1,23 @@
 import { z } from "zod";
-import { dateOfBirth, email, fullName, password, phone } from "./common";
+import {
+  country,
+  dateOfBirth,
+  email,
+  fullName,
+  optionalPhone,
+  password,
+  state,
+} from "./common";
 
 export const loginSchema = z.object({
   email,
   password: z.string().min(1, "Password is required"),
   remember: z.boolean().optional(),
+  // Re-confirmed on every sign-in, not only at registration. A student who
+  // agreed to terms a year ago has not seen the version in force today.
+  accept_terms: z.literal(true, {
+    error: "Accept the terms and privacy policy to sign in",
+  }),
 });
 export type LoginValues = z.input<typeof loginSchema>;
 
@@ -12,7 +25,9 @@ export const registerSchema = z
   .object({
     full_name: fullName,
     email,
-    phone,
+    phone: optionalPhone,
+    state,
+    country,
     date_of_birth: dateOfBirth,
     password,
     confirm_password: z.string().min(1, "Confirm your password"),

@@ -3,6 +3,20 @@ import type { User } from "@/types";
 import type { LoginValues, RegisterValues } from "@/lib/validation";
 
 /**
+ * What actually goes to the API when signing in.
+ *
+ * `accept_terms` is on the form schema but not here. It is a gate in the
+ * browser — the server authenticates on the credentials alone, and a checkbox
+ * a client claims to have ticked is not something a server can verify. Typing
+ * it out of the request keeps a meaningless field from being sent and later
+ * read as though it meant something.
+ *
+ * Declared here rather than in the hook so the hook can import it, and not the
+ * other way round.
+ */
+export type LoginCredentials = Omit<LoginValues, "accept_terms">;
+
+/**
  * Auth calls hit the Next route handlers rather than the proxy, because those
  * handlers are what set and clear the httpOnly session cookies — and what
  * refuse an administrator account before any cookie is written.
@@ -25,18 +39,33 @@ async function authRequest<T>(path: string, body?: unknown): Promise<T> {
   return payload as T;
 }
 
-export function login(values: LoginValues) {
+export function login(values: LoginCredentials) {
   return authRequest<{ user: User }>("login", {
     email: values.email,
     password: values.password,
   });
 }
 
+/**
+ * Fields are listed explicitly rather than spread, so that `confirm_password`
+ * and `accept_terms` — which exist only in the browser — never reach the API.
+ *
+ * The cost of doing it this way is that a new field is silently dropped unless
+ * it is added here too. That already happened once: `date_of_birth` became
+ * required on the server while this function still sent four fields, so every
+ * registration failed with a 422 naming a field the form was collecting
+ * perfectly well. If you add to `registerSchema`, add to this list.
+ */
 export function register(values: RegisterValues) {
   return authRequest<{ email: string }>("register", {
     full_name: values.full_name,
     email: values.email,
-    phone: values.phone,
+    // Optional — omitted entirely rather than sent as an empty string, so the
+    // API stores NULL.
+    phone: values.phone || undefined,
+    state: values.state,
+    country: values.country,
+    date_of_birth: values.date_of_birth,
     password: values.password,
   });
 }

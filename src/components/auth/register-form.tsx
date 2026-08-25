@@ -4,13 +4,19 @@ import * as React from "react";
 import Link from "next/link";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, Select } from "@/components/ui/input";
 import { FormField, PasswordRules, useZodForm } from "@/components/ui/form";
 import { Alert } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/toast";
 import { useRegister } from "@/hooks/use-session";
 import { isApiError } from "@/lib/api/errors";
-import { MINIMUM_AGE, registerSchema, type RegisterValues } from "@/lib/validation";
+import {
+  COUNTRIES,
+  INDIAN_STATES,
+  MINIMUM_AGE,
+  registerSchema,
+  type RegisterValues,
+} from "@/lib/validation";
 
 /**
  * The latest date that could belong to someone old enough to register.
@@ -38,6 +44,9 @@ export function RegisterForm() {
       full_name: "",
       email: "",
       phone: "",
+      // Nearly everyone, so it is preselected rather than made a decision.
+      country: "India",
+      state: "",
       date_of_birth: "",
       password: "",
       confirm_password: "",
@@ -45,6 +54,18 @@ export function RegisterForm() {
   });
 
   const passwordValue = form.watch("password") ?? "";
+  const selectedCountry = form.watch("country");
+
+  // Switching country invalidates whatever state was chosen for the previous
+  // one — "Karnataka" left sitting in the field after picking Canada would be
+  // submitted as-is.
+  const previousCountry = React.useRef(selectedCountry);
+  React.useEffect(() => {
+    if (previousCountry.current !== selectedCountry) {
+      previousCountry.current = selectedCountry;
+      form.setValue("state", "", { shouldValidate: false });
+    }
+  }, [selectedCountry, form]);
 
   const onSubmit = async (values: RegisterValues) => {
     try {
@@ -104,11 +125,15 @@ export function RegisterForm() {
         )}
       </FormField>
 
+      {/*
+        Optional. Nothing in the platform sends an SMS or places a call, so
+        requiring a number was collecting data we have no use for. Labelled so
+        people know they can skip it rather than guessing.
+      */}
       <FormField
         form={form}
         name="phone"
-        label="Phone"
-        required
+        label="Phone (optional)"
         hint="Indian mobile number, with or without +91."
       >
         {(field) => (
@@ -121,6 +146,47 @@ export function RegisterForm() {
           />
         )}
       </FormField>
+
+      <div className="grid gap-5 sm:grid-cols-2">
+        <FormField form={form} name="country" label="Country" required>
+          {(field) => (
+            <Select {...field} {...form.register("country")}>
+              {COUNTRIES.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </Select>
+          )}
+        </FormField>
+
+        {/*
+          A picker for India, a text box for everywhere else. A dropdown of
+          Indian states shown to someone in Canada is worse than useless, and
+          a worldwide list of subdivisions is not a thing worth shipping.
+        */}
+        <FormField form={form} name="state" label="State" required>
+          {(field) =>
+            selectedCountry === "India" ? (
+              <Select {...field} {...form.register("state")}>
+                <option value="">Select your state</option>
+                {INDIAN_STATES.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <Input
+                {...field}
+                {...form.register("state")}
+                autoComplete="address-level1"
+                placeholder="State or province"
+              />
+            )
+          }
+        </FormField>
+      </div>
 
       {/*
         Asked for because Indian data protection law requires verifiable

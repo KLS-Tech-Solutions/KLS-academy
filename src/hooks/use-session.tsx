@@ -3,8 +3,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { queryKeys } from "@/lib/query-keys";
-import { getSession, login, logout, register } from "@/services/auth.service";
-import type { LoginValues, RegisterValues } from "@/lib/validation";
+import {
+  getSession,
+  login,
+  logout,
+  register,
+  type LoginCredentials,
+} from "@/services/auth.service";
+import type { RegisterValues } from "@/lib/validation";
 
 /** Current user, or null when signed out. Never throws on 401. */
 export function useSession() {
@@ -34,7 +40,7 @@ export function useLogin(next?: string | null) {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (values: LoginValues) => login(values),
+    mutationFn: (values: LoginCredentials) => login(values),
     onSuccess: ({ user }) => {
       queryClient.setQueryData(queryKeys.session, user);
       queryClient.invalidateQueries({ queryKey: queryKeys.journey.all });

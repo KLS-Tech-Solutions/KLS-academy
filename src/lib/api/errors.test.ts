@@ -52,6 +52,69 @@ describe("parseErrorBody", () => {
   });
 });
 
+/**
+ * Which message reaches the screen.
+ *
+ * The bug this guards against: every 401 and 403 returned boilerplate, so a
+ * wrong password on the sign-in page read "Your session has expired. Sign in
+ * again to continue." — advice that makes no sense where it appeared, and
+ * which hides the real reason. A suspended account read "You don't have access
+ * to this", which sends someone to support for a problem support cannot see.
+ */
+describe("which message is shown", () => {
+  it("keeps the API's wording for a refused account", () => {
+    const error = parseErrorBody(403, { detail: "This account has been suspended" });
+    expect(error.userMessage).toBe("This account has been suspended");
+  });
+
+  it("keeps the API's wording for a closed account", () => {
+    const error = parseErrorBody(403, { detail: "This account has been closed" });
+    expect(error.userMessage).toBe("This account has been closed");
+  });
+
+  it("exposes the API's wording separately for sign-in to use", () => {
+    // The sign-in screen knows a 401 means bad credentials rather than an
+    // expired session, so it reads this instead of `userMessage`.
+    const error = parseErrorBody(401, { detail: "Incorrect email or password" });
+    expect(error.serverMessage).toBe("Incorrect email or password");
+  });
+
+  it("still shows session copy for a 401 with no useful detail", () => {
+    // An ordinary page load with an expired token. "Token is invalid" belongs
+    // in a log, not on screen.
+    const error = parseErrorBody(401, { detail: "Token is invalid" });
+    expect(error.userMessage).toBe("Your session has expired. Sign in again to continue.");
+  });
+
+  it("never shows the server's words for a 500", () => {
+    // A 5xx body can carry a traceback or an SQL fragment. That tells an
+    // attacker more than it tells a student.
+    const error = parseErrorBody(500, {
+      detail: 'relation "users" does not exist at character 15',
+    });
+    expect(error.userMessage).toBe(
+      "Something went wrong on our side. Please try again shortly.",
+    );
+    expect(error.userMessage).not.toContain("users");
+  });
+
+  it("has no serverMessage when the API sent no sentence", () => {
+    expect(parseErrorBody(500, undefined).serverMessage).toBeNull();
+    expect(parseErrorBody(422, { detail: [{ loc: ["body"], msg: "bad" }] }).serverMessage)
+      .toBeNull();
+  });
+
+  it("surfaces a duplicate-email conflict as the API worded it", () => {
+    // Registration raises 409 for exactly one reason, and the form puts this
+    // on the email input rather than in a banner.
+    const error = parseErrorBody(409, {
+      detail: "An account with this email already exists",
+    });
+    expect(error.kind).toBe("conflict");
+    expect(error.userMessage).toBe("An account with this email already exists");
+  });
+});
+
 describe("isApiError", () => {
   it("recognises our own errors", () => {
     expect(isApiError(parseErrorBody(400, { detail: "no" }))).toBe(true);

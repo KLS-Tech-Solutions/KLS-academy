@@ -26,12 +26,23 @@ export class ApiError extends Error {
   readonly fieldErrors: FieldError[];
   readonly detail: unknown;
 
+  /**
+   * The sentence the API sent, when it sent one.
+   *
+   * Separate from `message` because not every API message is fit to show a
+   * person — `deps.py` returns "Token is invalid" for an expired session, and
+   * that belongs in a log, not on screen. Call sites that know the context use
+   * this; everything else falls back to `userMessage`.
+   */
+  readonly serverMessage: string | null;
+
   constructor(init: {
     message: string;
     kind: ApiErrorKind;
     status: number;
     fieldErrors?: FieldError[];
     detail?: unknown;
+    serverMessage?: string | null;
   }) {
     super(init.message);
     this.name = "ApiError";
@@ -39,9 +50,23 @@ export class ApiError extends Error {
     this.status = init.status;
     this.fieldErrors = init.fieldErrors ?? [];
     this.detail = init.detail;
+    this.serverMessage = init.serverMessage ?? null;
   }
 
-  /** Copy safe to show a student — never leaks stack traces or SQL. */
+  /**
+   * Copy safe to show a student — never leaks stack traces or SQL.
+   *
+   * Where the API sends a message written for a person, that message wins.
+   * The generic strings below are a fallback, and treating them as the only
+   * option is what made a wrong password report "Your session has expired",
+   * and a suspended account report "You don't have access to this" — both of
+   * which send someone to the wrong remedy.
+   *
+   * 401 is the exception: it is overwhelmingly produced by a session that ran
+   * out on an ordinary page load, where "Token is invalid" is worse than the
+   * generic line. Sign-in screens, which know a 401 means bad credentials,
+   * read `serverMessage` directly.
+   */
   get userMessage() {
     switch (this.kind) {
       case "network":
@@ -49,19 +74,22 @@ export class ApiError extends Error {
       case "unauthorized":
         return "Your session has expired. Sign in again to continue.";
       case "forbidden":
-        return "You don't have access to this.";
+        return this.serverMessage ?? "You don't have access to this.";
       case "not_found":
-        return "We couldn't find what you were looking for.";
+        return this.serverMessage ?? "We couldn't find what you were looking for.";
       case "validation":
         return this.fieldErrors[0]?.message ?? "Some details need fixing.";
       case "conflict":
-        return this.message;
+        return this.serverMessage ?? this.message;
       case "rate_limited":
-        return "Too many attempts. Wait a moment and try again.";
+        return this.serverMessage ?? "Too many attempts. Wait a moment and try again.";
       case "server":
+        // Never the server's own words here: a 500 body can carry a traceback
+        // or an SQL fragment, which tells an attacker more than it tells a
+        // student.
         return "Something went wrong on our side. Please try again shortly.";
       default:
-        return "Something unexpected happened. Please try again.";
+        return this.serverMessage ?? "Something unexpected happened. Please try again.";
     }
   }
 }
@@ -103,7 +131,13 @@ export function parseErrorBody(status: number, body: unknown): ApiError {
     }
 
     if (typeof detail === "string") {
-      return new ApiError({ message: detail, kind, status, detail });
+      return new ApiError({
+        message: detail,
+        kind,
+        status,
+        detail,
+        serverMessage: detail,
+      });
     }
   }
 

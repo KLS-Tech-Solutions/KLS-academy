@@ -135,6 +135,7 @@ function ChapterCard({ chapter }: { chapter: LearningChapter }) {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [opening, setOpening] = React.useState(false);
+  const [saving, setSaving] = React.useState(false);
 
   const markRead = useMutation({
     mutationFn: () => markChapterRead(chapter.id),
@@ -142,38 +143,65 @@ function ChapterCard({ chapter }: { chapter: LearningChapter }) {
   });
 
   /**
-   * Opens the PDF in a new tab.
+   * Reads the chapter, either in a new tab or onto the student's own disk.
    *
    * Fetched as a blob rather than linked directly: the notes are served from
    * an authenticated route, so a plain anchor would arrive without the session
    * and get a 401.
+   *
+   * `save` asks the API for `?download=1`, which only changes the
+   * Content-Disposition it sends back — the bytes are identical. The anchor
+   * click is what actually puts the file in the student's downloads folder;
+   * `window.open` on a blob would just show it again in a viewer.
    */
-  const open = async () => {
-    setOpening(true);
+  const fetchChapter = async (save: boolean) => {
+    const setter = save ? setSaving : setOpening;
+    setter(true);
     try {
       const response = await fetch(
-        `${CLIENT_API_PREFIX}/me/chapters/${chapter.id}/download`,
+        `${CLIENT_API_PREFIX}/me/chapters/${chapter.id}/download${
+          save ? "?download=1" : ""
+        }`,
         { credentials: "same-origin" },
       );
       if (!response.ok) throw new Error("Those notes couldn't be opened");
 
       const url = URL.createObjectURL(await response.blob());
-      window.open(url, "_blank", "noopener");
-      // Revoked on a delay so the new tab has time to load it first.
-      setTimeout(() => URL.revokeObjectURL(url), 60_000);
 
+      if (save) {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = chapter.pdf_filename ?? `${chapter.title}.pdf`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        // The download has already started by the time click() returns, so
+        // this can be revoked promptly.
+        setTimeout(() => URL.revokeObjectURL(url), 1_000);
+      } else {
+        window.open(url, "_blank", "noopener");
+        // Revoked on a delay so the new tab has time to load it first.
+        setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      }
+
+      // Downloading counts as reading it. Someone who saved the PDF to read
+      // offline has engaged with the chapter just as much as someone who
+      // opened it in a tab.
       if (!chapter.is_read) markRead.mutate();
     } catch (error) {
       toast({
-        title: "Couldn't open the notes",
+        title: save ? "Couldn't download the notes" : "Couldn't open the notes",
         description:
           error instanceof Error ? error.message : "Try again in a moment.",
         variant: "error",
       });
     } finally {
-      setOpening(false);
+      setter(false);
     }
   };
+
+  const open = () => fetchChapter(false);
+  const save = () => fetchChapter(true);
 
   const difficulty = DIFFICULTY[chapter.difficulty];
 
@@ -216,12 +244,36 @@ function ChapterCard({ chapter }: { chapter: LearningChapter }) {
           </p>
         </div>
 
-        <div className="shrink-0">
+        <div className="flex shrink-0 gap-2">
           {chapter.pdf_url ? (
-            <Button variant="secondary" size="sm" onClick={open} disabled={opening}>
-              {opening ? <Loader2 className="animate-spin" /> : <Download />}
-              {opening ? "Opening…" : "Read"}
-            </Button>
+            <>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={open}
+                disabled={opening || saving}
+              >
+                {opening ? <Loader2 className="animate-spin" /> : <BookOpen />}
+                {opening ? "Opening…" : "Read"}
+              </Button>
+              {/*
+                A separate button rather than only the viewer, because the
+                notes are meant to be kept. Someone revising offline should not
+                have to find the download control inside a browser's PDF
+                toolbar, which differs on every browser and is absent on most
+                phones.
+              */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={save}
+                disabled={opening || saving}
+                aria-label={`Download ${chapter.title} as PDF`}
+              >
+                {saving ? <Loader2 className="animate-spin" /> : <Download />}
+                {saving ? "Saving…" : "Download"}
+              </Button>
+            </>
           ) : (
             <Button variant="secondary" size="sm" disabled>
               Coming soon

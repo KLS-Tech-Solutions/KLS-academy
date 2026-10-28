@@ -18,7 +18,7 @@ export type LinkedInSubmissionValues = z.input<typeof linkedinSubmissionSchema>;
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
 
-/** One uploaded screenshot, held locally until Phase 3 sends it to R2. */
+/** One uploaded screenshot, held in the browser until the form is submitted. */
 export const screenshotSchema = z.object({
   id: z.string(),
   file: z

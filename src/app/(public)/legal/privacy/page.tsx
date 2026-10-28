@@ -165,13 +165,11 @@ export default function PrivacyPage() {
       </p>
       <ul>
         <li>
-          <strong>Our hosting and database provider</strong> — where the
-          application and its PostgreSQL database run.
+          <strong>Our hosting provider</strong> — where the application runs.
         </li>
         <li>
-          <strong>Cloudflare R2</strong> — object storage for uploaded screenshots
-          and generated PDFs. The bucket is private; files are served only through
-          authenticated requests, never by public link.
+          <strong>Our database provider</strong> — a managed PostgreSQL service
+          that stores your account and internship records.
         </li>
         <li>
           <strong>Our email provider</strong> — delivers verification, password
@@ -315,8 +313,10 @@ export default function PrivacyPage() {
         <li>Passwords are hashed with Argon2 and are not recoverable — not by us either.</li>
         <li>All traffic is served over HTTPS.</li>
         <li>
-          Uploaded files live in a private bucket and are validated by content, not
-          by what the upload claims to be.
+          Uploaded files are stored on our own server, outside the public web
+          root, and are validated by content rather than by what the upload
+          claims to be. They are reachable only through a request we have
+          authenticated — there is no link that works without signing in.
         </li>
         <li>
           Sign-in, registration and email-sending endpoints are rate limited

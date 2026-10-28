@@ -18,7 +18,8 @@ export interface LocalScreenshot {
 
 /**
  * Local-only uploader. Previews use object URLs; nothing leaves the browser.
- * Phase 3 posts these files to Cloudflare R2 as multipart form data.
+ * Posted to the API as multipart form data; it stores them on the server's
+ * own disk and serves them back only through authenticated routes.
  */
 export function ScreenshotUploader({
   value,

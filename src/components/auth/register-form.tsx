@@ -72,17 +72,30 @@ export function RegisterForm() {
       await registerMutation.mutateAsync(values);
       toast({
         title: "Account created",
-        description: "Check your inbox to verify your email address.",
+        description: "Sign in with the password you just chose.",
         variant: "success",
       });
     } catch (error) {
-      // Surface backend field errors (duplicate email, etc.) on the fields.
-      if (isApiError(error) && error.kind === "validation") {
+      if (!isApiError(error)) return;
+
+      // 422 — FastAPI names the field that failed, so put the message on it.
+      if (error.kind === "validation") {
         for (const fieldError of error.fieldErrors) {
           form.setError(fieldError.field as keyof RegisterValues, {
             message: fieldError.message,
           });
         }
+        return;
+      }
+
+      // 409 — registration raises this for exactly one reason: the email is
+      // taken. Landing it on the email input rather than a banner at the top
+      // means the person sees it next to the thing they have to change.
+      if (error.kind === "conflict") {
+        form.setError("email", {
+          message:
+            error.serverMessage ?? "An account with this email already exists",
+        });
       }
     }
   };
@@ -93,8 +106,17 @@ export function RegisterForm() {
       noValidate
       onSubmit={form.handleSubmit(onSubmit)}
     >
+      {/*
+        The banner is for failures with no field to attach to — network, 5xx,
+        rate limiting. Validation and conflict both land on an input now, and
+        showing them here as well says the same thing twice.
+      */}
       {registerMutation.isError &&
-        !(isApiError(registerMutation.error) && registerMutation.error.kind === "validation") && (
+        !(
+          isApiError(registerMutation.error) &&
+          (registerMutation.error.kind === "validation" ||
+            registerMutation.error.kind === "conflict")
+        ) && (
           <Alert variant="danger">
             {isApiError(registerMutation.error)
               ? registerMutation.error.userMessage

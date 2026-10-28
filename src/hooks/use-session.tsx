@@ -54,7 +54,11 @@ export function useRegister() {
 
   return useMutation({
     mutationFn: (values: RegisterValues) => register(values),
-    onSuccess: () => router.push("/verify-email"),
+    // Straight to sign-in. There is no verification step any more — the
+    // account works the moment the form is submitted — so sending someone to
+    // a "check your inbox" page would be telling them to wait for something
+    // that is not coming.
+    onSuccess: () => router.push("/login?registered=1"),
   });
 }
 

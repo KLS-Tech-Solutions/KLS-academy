@@ -18,9 +18,9 @@ export function LoginForm() {
   const params = useSearchParams();
   const [show, setShow] = React.useState(false);
 
-  // Both set by the verification email flow: `verified` shows the banner,
-  // `next` sends the student on to pick a domain instead of the dashboard.
-  const justVerified = params.get("verified") === "1";
+  // `registered` is set by the signup redirect; `next` sends the student on
+  // to pick a domain instead of the dashboard.
+  const justRegistered = params.get("registered") === "1";
   const loginMutation = useLogin(params.get("next"));
 
   const form = useZodForm(loginSchema, {
@@ -50,19 +50,26 @@ export function LoginForm() {
       noValidate
       onSubmit={form.handleSubmit(onSubmit)}
     >
-      {justVerified && !loginMutation.isError && (
+      {justRegistered && !loginMutation.isError && (
         <Alert variant="success">
           <span className="inline-flex items-center gap-2">
             <CheckCircle2 className="size-4 shrink-0" />
-            Email verified. Sign in to choose your internship.
+            Account created. Sign in to choose your internship.
           </span>
         </Alert>
       )}
 
+      {/*
+        `serverMessage` first, deliberately. A 401 here means the credentials
+        were wrong, not that a session ran out — and `userMessage` returns the
+        session copy for every 401, which told people to "sign in again" on the
+        sign-in page. The API's own wording ("Incorrect email or password",
+        "This account has been suspended") is the one that helps.
+      */}
       {loginMutation.isError && (
         <Alert variant="danger">
           {isApiError(loginMutation.error)
-            ? loginMutation.error.userMessage
+            ? loginMutation.error.serverMessage ?? loginMutation.error.userMessage
             : "We couldn't sign you in. Try again."}
         </Alert>
       )}

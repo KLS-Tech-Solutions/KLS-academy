@@ -111,9 +111,10 @@ export default function PrivacyPage() {
           reviewer assess your work, and issuing your certificate.
         </li>
         <li>
-          <strong>To contact you about it:</strong> verifying your email address,
-          resetting your password, and notifying you when a submission is reviewed
-          or a certificate is issued. These are part of the service, not marketing.
+          <strong>To contact you about it:</strong> a welcome message when you
+          register, resetting your password, and notifying you when a submission
+          is reviewed or a certificate is issued. These are part of the service,
+          not marketing.
         </li>
         <li>
           <strong>To keep the platform safe:</strong> rate limiting, detecting
@@ -237,8 +238,7 @@ export default function PrivacyPage() {
           deliberate — see below.
         </li>
         <li>
-          <strong>Email verification and password reset links:</strong> 24 hours
-          and 30 minutes respectively, then they stop working.
+          <strong>Password reset links:</strong> 30 minutes, and they work once.
         </li>
         <li>
           <strong>Activity and verification logs:</strong> retained for security

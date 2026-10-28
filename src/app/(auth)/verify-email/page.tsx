@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 
-import { VerifyEmail } from "@/components/auth/verify-email";
-
-export const metadata: Metadata = { title: "Verify your email" };
+export const metadata: Metadata = { title: "Sign in" };
 
 /**
- * `?token=` arrives from the link in the verification email. Reading it here
- * rather than in the client avoids a Suspense boundary and means the page
- * knows which of its two states to render before it paints.
+ * Kept as a redirect, not deleted.
+ *
+ * There is no email verification step any more — an account works the moment
+ * the signup form is submitted. But verification links were sent to real
+ * addresses before that changed, and inboxes are forever: someone will click
+ * one next month. A 404 would read as "your account is broken", which is the
+ * opposite of true.
+ *
+ * So anyone arriving here is quietly sent to sign in, where their account is
+ * already waiting for them.
  */
-export default async function VerifyEmailPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ token?: string | string[] }>;
-}) {
-  const { token } = await searchParams;
-  const value = Array.isArray(token) ? token[0] : token;
-  return <VerifyEmail token={value?.trim() || null} />;
+export default function VerifyEmailPage() {
+  redirect("/login?registered=1");
 }

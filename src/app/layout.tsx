@@ -4,6 +4,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AnalyticsProvider } from "@/components/shared/analytics-provider";
 import { OrganizationSchema } from "@/components/shared/structured-data";
+import { GoogleAnalytics } from "@/components/shared/google-analytics";
 import { SITE } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -82,6 +83,7 @@ export default function RootLayout({
           <ToastProvider>{children}</ToastProvider>
         </QueryProvider>
         <AnalyticsProvider />
+        <GoogleAnalytics />
       </body>
     </html>
   );

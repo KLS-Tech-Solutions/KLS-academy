@@ -42,6 +42,10 @@ export default function PrivacyPage() {
         <li>We collect what the internship needs, and not much else.</li>
         <li>We do not sell your data, and we do not advertise to you.</li>
         <li>
+          We use Google Analytics, which sets cookies. Blocking them costs you
+          nothing here.
+        </li>
+        <li>
           Only your name, domain, duration and issue date appear publicly, and
           only on a certificate verification page someone has to know the number
           to reach.
@@ -181,6 +185,11 @@ export default function PrivacyPage() {
           <strong>Mixpanel</strong> — product analytics, in the limited form
           described below.
         </li>
+        <li>
+          <strong>Google Analytics</strong> — audience measurement. It sets
+          cookies and sees your IP address; it is not sent your name, email or
+          account identifier. See Analytics below.
+        </li>
       </ul>
       <p>
         Beyond these, we disclose personal data only where the law requires it,
@@ -188,9 +197,12 @@ export default function PrivacyPage() {
       </p>
 
       <h2>Analytics</h2>
+      <p>We use two analytics tools, and they work differently.</p>
+
+      <h3>Mixpanel — product analytics</h3>
       <p>
-        We use Mixpanel to count things like how many people reached the
-        enrolment page and how many finished. It is configured so that:
+        Used to count things like how many people reached the enrolment page and
+        how many finished. It is configured so that:
       </p>
       <ul>
         <li>No name, email address, phone number or user identifier is sent.</li>
@@ -208,10 +220,41 @@ export default function PrivacyPage() {
         up what you personally did in Mixpanel, and neither can anyone else.
       </p>
 
+      <h3>Google Analytics — audience measurement</h3>
+      <p>
+        Used to understand how people find the site and which pages they read.
+        It is a Google product and it behaves like one: unlike our Mixpanel
+        setup, <strong>it sets cookies in your browser</strong> and processes
+        your IP address and general location to do its job.
+      </p>
+      <p>
+        We do not send it your name, email address or any account identifier, so
+        it cannot tell Google who you are on this site. We use it for totals and
+        trends, not to follow individuals. Google&apos;s own handling of the data
+        it collects is governed by its privacy policy, not ours.
+      </p>
+      <p>
+        Most browsers let you block these cookies, and extensions that block
+        analytics work normally here — the site functions perfectly without
+        them.
+      </p>
+
       <h2>Cookies</h2>
       <p>
-        We do not use advertising or tracking cookies, and there is no consent
-        banner because there is nothing to consent to.
+        <strong>Essential cookies.</strong> Signing in sets session cookies that
+        hold your access and refresh tokens. They are <code>httpOnly</code>, so
+        no JavaScript — ours or anyone else&apos;s — can read them, which is what
+        stops a script on the page from stealing your session. The site cannot
+        keep you signed in without them. Signing out clears them.
+      </p>
+      <p>
+        <strong>Analytics cookies.</strong> Google Analytics sets its own
+        cookies to tell one visit from another and one visitor from another.
+        These are not advertising cookies — we run no ads, we sell no data, and
+        nothing here builds an advertising profile of you — but they are
+        tracking cookies in the ordinary sense of the term, and you are entitled
+        to refuse them. Blocking them in your browser costs you nothing on this
+        site.
       </p>
       <p>
         Signing in sets session cookies that hold your access and refresh tokens.
